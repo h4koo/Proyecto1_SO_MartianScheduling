@@ -224,7 +224,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="buttonDisminuirVelodidad">
+          <object class="GtkButton" id="buttonDisminuirVelocidad">
             <property name="label" translatable="yes">&gt;&gt;&gt;</property>
             <property name="width_request">90</property>
             <property name="height_request">40</property>
