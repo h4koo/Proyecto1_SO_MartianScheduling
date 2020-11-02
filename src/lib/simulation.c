@@ -1,4 +1,10 @@
+#include <unistd.h>
 #include "../include/simulation.h"
+
+#define MAX_TIME_STEP 1000000
+#define MIN_TIME_STEP 100000
+#define NO_SCHEDULING -1
+#define SCHEDULING_ERROR -2
 
 static enum sim_state {
     SIM_INITIAL,
@@ -20,9 +26,10 @@ static enum app_mode {
 
 static martian_t _martians[MAX_MARTIANS];
 static int _num_martians = 0;
+static int _completed_martians = 0;
 
 static int _sim_timer = 0;
-static int _time_multiplier = 1;
+static unsigned int _time_step = 500000;
 
 static position_t _start_position = {0, 4};
 static position_t _end_position = {19, 6};
@@ -48,6 +55,11 @@ int addMartian(martian_t new_martian)
         return -1;
     }
     new_martian.state = MRTN_RUNNING;
+    new_martian.remaining_energy = 0;
+    new_martian.previous_position.x = -1;
+    new_martian.previous_position.y = -1;
+    new_martian.position.x = _start_position.x;
+    new_martian.position.y = _start_position.y;
     _martians[_num_martians] = new_martian;
     _num_martians++;
 
@@ -66,33 +78,68 @@ int getNumMartians()
 }
 
 // starts the simulation loop
-int startSimulation();
+int startSimulation()
+{
+    _simulation_state = SIM_RUNNING;
+
+    // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
+    simulationLoop();
+}
 
 // pauses simulation loop
-int pauseSimulation();
+int pauseSimulation()
+{
+    _simulation_state = SIM_PAUSED;
+}
 
 // ends the simulation
-int endSimulation();
+int endSimulation()
+{
+    _simulation_state = SIM_FINISHED;
+}
 
 // makes the simulation go faster (0 < t_mult < 1) or slower  (1 < t_mult)
-int changeSimulationSpeed(int t_mult);
+// int changeSimulationSpeed(int t_mult);
+int makeSimulationSlower()
+{
+    _time_step += 100000;
+    if (_time_step > MAX_TIME_STEP)
+    {
+        _time_step = MAX_TIME_STEP - 1;
+        printf("The slowest setting has been reached");
+    }
+}
+int makeSimulationFaster()
+{
+    _time_step -= 100000;
+    if (_time_step < MIN_TIME_STEP)
+    {
+        _time_step = MIN_TIME_STEP;
+        printf("The fastest setting has been reached");
+    }
+}
 
 // ++++ Internal funcs ++++
 
-// returns index of the next martian to move acording to RM scheduling
+// returns the index of the next martian to move acording to RM scheduling
+// also refills the martians energy if needed and throws error if not able to reschedule
 int rateMonotonicScheduling()
 {
     martian_t *mrt;
-    int selected_id = -1;
-    int lowest_period = 9999999999;
+    int completed_mrt = 0;
+    int selected_id = NO_SCHEDULING;
+    int lowest_period = 999999;
 
-    for (int i = 0; i < _num_martians; i++)
+    for (int i = 0; i < _num_martians; ++i)
     {
         mrt = _martians + i;
 
         // if the martian already completed
         if (mrt->state == MRTN_COMPLETED)
+        {
+            ++completed_mrt;
             continue;
+        }
 
         // check if the martian is due for another scheduling
         if ((_sim_timer % mrt->period) == 0)
@@ -102,7 +149,7 @@ int rateMonotonicScheduling()
             {
                 printf("ERROR SCHEDULING RM: Martian %s was unable to complete past work before starting new one\n", mrt->name);
                 _simulation_state = SIM_ERROR;
-                return -2;
+                return SCHEDULING_ERROR;
             }
             else
             {
@@ -120,26 +167,31 @@ int rateMonotonicScheduling()
             }
         }
     } // end for
-
+    _completed_martians = completed_mrt;
     return selected_id;
 }
 
 // returns index of the next martian to move acording to EDF scheduling
+// also refills the martians energy if needed and throws error if not able to reschedule
 int earliestDeadlineFirst()
 {
 
     martian_t *mrt;
+    int completed_mrt = 0;
     int deadline, num_cycles;
-    int selected_id = -1;
-    int earliest_deadline = 9999999999;
+    int selected_id = NO_SCHEDULING; //if -1 is returned no scheduling is needed
+    int earliest_deadline = 999999;
 
-    for (int i = 0; i < _num_martians; i++)
+    for (int i = 0; i < _num_martians; ++i)
     {
         mrt = _martians + i;
 
         // if the martian already completed
         if (mrt->state == MRTN_COMPLETED)
+        {
+            ++completed_mrt;
             continue;
+        }
         // check if the martian is due for another scheduling
         if ((_sim_timer % mrt->period) == 0)
         {
@@ -148,7 +200,7 @@ int earliestDeadlineFirst()
             {
                 printf("ERROR SCHEDULING RM: Martian %s was unable to complete past work before starting new one\n", mrt->name);
                 _simulation_state = SIM_ERROR;
-                return -2;
+                return SCHEDULING_ERROR;
             }
             else
             {
@@ -170,6 +222,7 @@ int earliestDeadlineFirst()
         }
     } // end for
 
+    _completed_martians = completed_mrt;
     return selected_id;
 }
 
@@ -179,10 +232,10 @@ int moveMartian(int martian_index)
 
     martian_t *martian = _martians + martian_index;
     position_t up = martian->position, down = martian->position, right = martian->position, left = martian->position;
-    up.y--;
-    down.y++;
-    right.x++;
-    left.x--;
+    --up.y;
+    ++down.y;
+    ++right.x;
+    --left.x;
 
     // // check where the martian is relative to the end position
     // int x_diff = end_position.x - martian->position.x;
@@ -200,7 +253,7 @@ int moveMartian(int martian_index)
     // }
 
     //try moving up
-    if (up.y >= 0 && up.y < LAB_HEIGT && _labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
+    if (up.y >= 0 && up.y < LAB_HEIGT && _labyrinth[up.y][up.x] == LAB_EMPTY && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
@@ -210,7 +263,7 @@ int moveMartian(int martian_index)
     }
 
     //try moving right
-    else if (right.x >= 0 && right.x < LAB_WIDTH && _labyrinth[right.y][right.x] == 0 && !(right.y == martian->previous_position.y && right.x == martian->previous_position.x))
+    else if (right.x >= 0 && right.x < LAB_WIDTH && _labyrinth[right.y][right.x] == LAB_EMPTY && !(right.y == martian->previous_position.y && right.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
@@ -220,7 +273,7 @@ int moveMartian(int martian_index)
     }
 
     // try moving down
-    else if (down.y >= 0 && down.y < LAB_HEIGT && _labyrinth[down.y][down.x] == 0 && !(down.y == martian->previous_position.y && down.x == martian->previous_position.x))
+    else if (down.y >= 0 && down.y < LAB_HEIGT && _labyrinth[down.y][down.x] == LAB_EMPTY && !(down.y == martian->previous_position.y && down.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
@@ -230,7 +283,7 @@ int moveMartian(int martian_index)
     }
 
     //try moving left
-    else if (left.x >= 0 && left.x < LAB_WIDTH && _labyrinth[left.y][left.x] == 0 && !(left.y == martian->previous_position.y && left.x == martian->previous_position.x))
+    else if (left.x >= 0 && left.x < LAB_WIDTH && _labyrinth[left.y][left.x] == LAB_EMPTY && !(left.y == martian->previous_position.y && left.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
@@ -239,16 +292,26 @@ int moveMartian(int martian_index)
         _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
 
-    // the martian couldn't move anywhere
+    // the martian couldn't move anywhere to a new position, try moving to previous position
+    else if (_labyrinth[martian->previous_position.y][martian->previous_position.x] == LAB_EMPTY)
+    {
+        left = martian->position;
+        _labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
+        martian->position = martian->previous_position;
+        martian->previous_position = left;
+        _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
+    }
+
+    // the martian couldn't move
     else
     {
-        printf("ERROR!!!: Unable to move Martian %s\n", martian->name);
-        martian->remaining_energy--;
+        printf("ERROR!!!: Unable to move Martian %s, seems like he's trapped\n", martian->name);
+        --martian->remaining_energy;
         return -1;
     }
 
     // reduce remaining_energy of the martian
-    martian->remaining_energy--;
+    --martian->remaining_energy;
     return 0;
 }
 
@@ -256,6 +319,8 @@ int moveMartian(int martian_index)
 int simulationLoop()
 {
     int selected_martian_id;
+    martian_t *mrt;
+
     while (_simulation_state == SIM_RUNNING)
     {
         if (_selected_alg == RATE_MONOTONIC)
@@ -267,8 +332,29 @@ int simulationLoop()
             selected_martian_id = earliestDeadlineFirst();
         }
 
+        if (selected_martian_id == SCHEDULING_ERROR)
+            break;
+        if (selected_martian_id != NO_SCHEDULING)
+        {
+            moveMartian(selected_martian_id);
+            mrt = _martians + selected_martian_id;
+            printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
+            if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
+            {
+                mrt->state = MRTN_COMPLETED;
+                if (++_completed_martians == _num_martians)
+                {
+                    _simulation_state = SIM_FINISHED;
+                    break;
+                }
+            }
+        }
+
+        usleep(_time_step);
+        printf("Simulation time is: %d \n", _sim_timer);
         _sim_timer++;
     } // end while
+    printf("Completed simulation time is: %d \n", _sim_timer);
 
     if (_simulation_state == SIM_FINISHED || _simulation_state == SIM_ERROR)
     {

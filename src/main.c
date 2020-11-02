@@ -19,18 +19,25 @@ void func()
 
 int main(int argc, char *argv[])
 {
-    // martian_t m;
+    martian_t m;
 
-    // m.id = 1;
-    // m.max_energy = 10;
-    // m.name = "lol";
-    // m.period = 5;
-    // m.position.x = 0;
-    // m.position.y = 4;
-    // // m.previous_position = {-1,-1};
-    // addMartian(m);
+    m.id = 1;
+    m.max_energy = 5;
+    m.name = "foo";
+    m.period = 10;
+    m.position.x = 0;
+    m.position.y = 4;
+    // m.previous_position = {-1,-1};
+    addMartian(m);
+
+    m.max_energy = 5;
+    m.name = "bar";
+    m.period = 15;
+    addMartian(m);
+
+    startSimulation();
     // printf("\nEl nombre del marciano es %s\n", getMartian(0).name);
-    func();
+    // func();
 
     printf("\nEl valor del struct es x: %d  y: %d\n", ar.x, ar.y);
     return 0;

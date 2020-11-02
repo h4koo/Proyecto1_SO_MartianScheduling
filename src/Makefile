@@ -2,7 +2,7 @@
 
 #compiler
 CC = gcc
-APP_NAME = mrtsch
+APP_NAME = mrtsch.out
 LINKERFLAG = -lm
 
 SRCS := lib/simulation.c main.c
