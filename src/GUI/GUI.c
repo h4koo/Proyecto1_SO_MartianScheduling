@@ -21,7 +21,7 @@ int inicializeGUI(){
     buttonDisminuirVelocidad = GTK_WIDGET(gtk_builder_get_object(builder,"buttonDisminuirVelocidad"));
     canvasMatriz = GTK_WIDGET(gtk_builder_get_object(builder,"canvasMatriz"));
     treeEnergiaMarciano = GTK_WIDGET(gtk_builder_get_object(builder,"treeEnergiaMarciano"));
-    builder = GTK_WIDGET(gtk_builder_get_object(builder,"builder"));
+    builder = GTK_BUILDER(gtk_builder_get_object(builder,"builder"));
 
     return 0;
 }

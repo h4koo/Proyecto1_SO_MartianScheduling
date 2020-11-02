@@ -16,7 +16,7 @@ compile : $(OBJ)
 	$(CC) $(OBJ) -o $(APP_NAME) $(LINKERFLAG)
 
 compileGUI:
-	gcc -o mrtsch.out main.c $(SRCS) -lm `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+	gcc -g -o mrtsch.out main.c $(SRCS) -lm `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
 # lib/simulation.o : include/simulation.h
 
 clean :

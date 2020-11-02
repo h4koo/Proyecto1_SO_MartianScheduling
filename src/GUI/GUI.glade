@@ -64,7 +64,9 @@
             <property name="label" translatable="yes">Energia:</property>
             <attributes>
               <attribute name="foreground" value="#000000000000"/>
-            </attributes>
+            </attributes>{
+
+}
           </object>
           <packing>
             <property name="x">10</property>
