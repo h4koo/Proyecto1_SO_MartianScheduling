@@ -8,6 +8,10 @@
 #include <math.h>
 #include <ctype.h>
 
+
+#define LAB_HEIGHT 10
+#define LAB_WIDTH 20
+
 //Global Variables
 GtkWidget *mainWindow;
 GtkWidget *mainGrid;
@@ -29,6 +33,42 @@ GtkWidget *buttonDisminuirVelocidad;
 GtkWidget *canvasMatriz;
 GtkWidget *treeEnergiaMarciano;
 GtkBuilder *builder;
+
+static int _labyrinth[LAB_HEIGHT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                                               {1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+                                               {1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+                                               {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
+                                               {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1},
+                                               {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1},
+                                               {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
+                                               {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1},
+                                               {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
+                                               {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+
+
+//FUNCTIONS
+gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr){
+    for (int i = 0; i < LAB_HEIGHT; i++){
+        for (int j = 0; j <LAB_WIDTH; j++){
+            if (_labyrinth[i][j] == 0){
+                //draw white
+                cairo_set_source_rgb(cr,1.0,1.0,1.0); //RGB
+                cairo_rectangle(cr,j*30,i*30,30,30);
+                cairo_fill(cr);
+                cairo_stroke(cr);
+            }
+            else{
+                cairo_set_source_rgb(cr,0.0,0.0,0.0); //RGB
+                cairo_rectangle(cr,j*30,i*30,30,30);
+                cairo_fill(cr);
+                cairo_stroke(cr);
+            }
+        }
+    }
+}
+
+//
+
 
 int main(int argc, char *argv[]){
     gtk_init(&argc,&argv); // init Gtk
