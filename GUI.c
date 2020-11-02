@@ -67,6 +67,7 @@ gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr){
     }
 }
 
+
 //
 
 

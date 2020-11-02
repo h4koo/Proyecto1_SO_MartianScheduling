@@ -127,6 +127,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="startSimulation" swapped="no"/>
           </object>
           <packing>
             <property name="x">360</property>
@@ -141,6 +142,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="pauseSimulation" swapped="no"/>
           </object>
           <packing>
             <property name="x">505</property>
@@ -246,6 +248,7 @@
             <property name="height_request">435</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <signal name="draw" handler="drawMaze" swapped="no"/>
           </object>
           <packing>
             <property name="x">10</property>
