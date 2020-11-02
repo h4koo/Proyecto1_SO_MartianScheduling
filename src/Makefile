@@ -3,7 +3,7 @@
 #compiler
 CC = gcc
 APP_NAME = mrtsch.out
-LINKERFLAG = -lm -pthread
+LINKERFLAG = -lm -lpthread
 
 SRCS := lib/simulation.c GUI/GUI.c
 OBJ = lib/simulation.o GUI/GUI.o

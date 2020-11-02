@@ -32,6 +32,7 @@ void on_click_stop_simulation(){
 
 int main(int argc, char *argv[])
 {
+<<<<<<< HEAD
     // martian_t m;
     // m.id = 1;changeSimulationSpeed
     // m.max_energy = 10;
@@ -61,4 +62,29 @@ int main(int argc, char *argv[])
     gtk_widget_show(mainWindow);
     gtk_main();
     return EXIT_SUCCESS;
+=======
+    martian_t m;
+
+    m.id = 1;
+    m.max_energy = 5;
+    m.name = "Foo";
+    m.period = 10;
+    addMartian(m);
+
+    m.max_energy = 5;
+    m.name = "Bar";
+    m.period = 15;
+    addMartian(m);
+
+    startSimulation();
+
+    sleep(5);
+    pauseSimulation();
+    sleep(2);
+    // printf("\nEl nombre del marciano es %s\n", getMartian(0).name);
+    // func();
+
+    printf("\nfin del main\n");
+    return 0;
+>>>>>>> app-structure
 }
