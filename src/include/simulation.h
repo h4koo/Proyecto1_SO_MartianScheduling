@@ -50,6 +50,6 @@ int earliestDeadlineFirst();
 int moveMartian(int martian_index);
 
 // loop that simulates CPU clock. In charge of managing martians energy and moving them and checking
-int simulationLoop();
+void *simulationLoop();
 
 #endif

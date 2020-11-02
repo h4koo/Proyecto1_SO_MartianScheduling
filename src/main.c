@@ -23,22 +23,23 @@ int main(int argc, char *argv[])
 
     m.id = 1;
     m.max_energy = 5;
-    m.name = "foo";
+    m.name = "Foo";
     m.period = 10;
-    m.position.x = 0;
-    m.position.y = 4;
-    // m.previous_position = {-1,-1};
     addMartian(m);
 
     m.max_energy = 5;
-    m.name = "bar";
+    m.name = "Bar";
     m.period = 15;
     addMartian(m);
 
     startSimulation();
+
+    sleep(5);
+    pauseSimulation();
+    sleep(2);
     // printf("\nEl nombre del marciano es %s\n", getMartian(0).name);
     // func();
 
-    printf("\nEl valor del struct es x: %d  y: %d\n", ar.x, ar.y);
+    printf("\nfin del main\n");
     return 0;
 }

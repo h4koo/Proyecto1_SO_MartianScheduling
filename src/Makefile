@@ -3,7 +3,7 @@
 #compiler
 CC = gcc
 APP_NAME = mrtsch.out
-LINKERFLAG = -lm
+LINKERFLAG = -lm -lpthread
 
 SRCS := lib/simulation.c main.c
 OBJ = lib/simulation.o main.o
@@ -13,7 +13,7 @@ OBJ = lib/simulation.o main.o
 all : compile
 
 compile : $(OBJ)
-	$(CC) $(OBJ) -o $(APP_NAME) 
+	$(CC) $(OBJ) -o $(APP_NAME) $(LINKERFLAG)
 
 # lib/simulation.o : include/simulation.h
 

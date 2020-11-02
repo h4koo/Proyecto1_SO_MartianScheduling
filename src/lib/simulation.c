@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include "../include/simulation.h"
 
 #define MAX_TIME_STEP 1000000
@@ -27,6 +26,7 @@ static enum app_mode {
 static martian_t _martians[MAX_MARTIANS];
 static int _num_martians = 0;
 static int _completed_martians = 0;
+static pthread_t _running_sim_thread;
 
 static int _sim_timer = 0;
 static unsigned int _time_step = 500000;
@@ -44,6 +44,8 @@ static int _labyrinth[LAB_HEIGT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                                {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1},
                                                {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
                                                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+
+void *simulationLoop();
 
 // ++++ External funcs ++++
 int addMartian(martian_t new_martian)
@@ -83,6 +85,7 @@ int startSimulation()
     _simulation_state = SIM_RUNNING;
 
     // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
+    // pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
     simulationLoop();
 }
 
@@ -316,7 +319,7 @@ int moveMartian(int martian_index)
 }
 
 // loop that simulates CPU clock. In charge of managing martians energy and moving them and checking
-int simulationLoop()
+void *simulationLoop()
 {
     int selected_martian_id;
     martian_t *mrt;
