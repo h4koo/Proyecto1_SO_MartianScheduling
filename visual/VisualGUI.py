@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Button, Entry, OptionMenu, StringVar
+from tkinter import Tk, Canvas
 
 class VisualGUI:
     def __init__(self,master):
@@ -6,4 +6,80 @@ class VisualGUI:
         master.title("Proyecto 1")
         master.geometry("800x600")
 
-        self.loop = True
+        self.canvasWidth = 800
+        self.canvasHeight = 600
+
+        self.canvas = Canvas(master, width=self.canvasWidth, height=self.canvasHeight)
+        self.canvas.pack()
+
+        self.loadData()
+
+
+    def loadData(self):
+        processArray = []
+        frecuencyArray = []
+        total = 0
+        elements = 0
+
+        scheduleFile = open("schedule.txt","r")
+        lines = scheduleFile.readlines()
+
+        for line in lines:
+            if not processArray:
+                frecuencyArray.append(1)
+                processArray.append(line.rstrip("\n"))
+                total = 1
+                elements+=1
+
+            elif (processArray[-1] != line.rstrip("\n")):
+                frecuencyArray.append(1)
+                processArray.append(line.rstrip("\n"))
+                total += 1
+                if (processArray.index(line.rstrip("\n")) == 0):
+                    elements+=1
+
+            else:
+                frecuencyArray[-1] += 1
+                total += 1
+
+        self.drawData(self.canvasWidth//total,self.canvasHeight//elements, processArray,frecuencyArray)
+
+
+    def drawData(self, boxWidth, boxHeight, processArray, frecuencyArray):
+        acum = 0
+        for i in range(len(processArray)):
+            frec = frecuencyArray[i]
+            y = processArray.index(processArray[i])
+            color = self.colorPicker(y)
+
+            for j in range(frec):
+                self.canvas.create_rectangle(acum*boxWidth,boxHeight*y,acum*boxWidth + boxWidth,y*boxHeight + boxHeight, fill = color)
+                acum += 1
+
+        acum = 0
+        for i in range(len(processArray)):
+            frec = frecuencyArray[i]
+            y = processArray.index(processArray[i])
+
+            x_text = ((acum*boxWidth) + ((((acum + frec) * boxWidth) - (acum*boxWidth))/2))
+            y_text = ((boxHeight* y) + ((((boxHeight* y)+boxHeight) - (boxHeight* y))/2))
+
+            self.canvas.create_text(x_text,y_text,fill="black",font="Helvetica 20", text = processArray[i])
+
+            acum +=frec
+
+
+    def colorPicker(self, number):
+        if (number == 0):
+            return "red"
+        elif (number == 1):
+            return "green"
+        elif (number == 2):
+            return "blue"
+        elif (number == 3):
+            return "yellow"
+        elif (number == 4):
+            return "magenta"
+        elif (number == 5):
+            return "cyan"
+        return "black"
