@@ -23,5 +23,5 @@ int inicializeGUI(){
     treeEnergiaMarciano = GTK_WIDGET(gtk_builder_get_object(builder,"treeEnergiaMarciano"));
     builder = GTK_WIDGET(gtk_builder_get_object(builder,"builder"));
 
-    return 0
+    return 0;
 }
