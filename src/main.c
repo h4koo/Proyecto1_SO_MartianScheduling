@@ -1,51 +1,5 @@
+#include "./include/GUI.h"
 #include "./include/simulation.h"
-#include <gtk-3.0/gtk/gtk.h>
-#include <gtk-3.0/gtk/gtkx.h>
-
-
-//Global Variables
-GtkWidget *mainWindow;
-GtkWidget *mainGrid;
-GtkWidget *entryEnergia;
-GtkWidget *entryPeriodo;
-GtkWidget *buttonAgregar;
-GtkWidget *labelEnergia;
-GtkWidget *labelPeriodo;
-GtkWidget *labelAgregarMarciano;
-GtkWidget *labelSimulacion;
-GtkWidget *buttonComenzar;
-GtkWidget *buttonDetener;
-GtkWidget *labelModo;
-GtkWidget *buttonAutomatico;
-GtkWidget *buttonManual;
-GtkWidget *labelVelocidad;
-GtkWidget *buttonAumentarVelocidad;
-GtkWidget *buttonDisminuirVelocidad;
-GtkWidget *canvasMatriz;
-GtkWidget *treeEnergiaMarciano;
-GtkBuilder *builder;
-//
-
-
-//Functions
-
-// static struct art
-// {
-//     int x;
-//     int y;
-// } ar;
-
-// void func()
-// {
-//     struct art p;
-//     p.x = 1;
-//     p.y = 1;
-
-//     ar.x = p.x;
-//     ar.y = p.y;
-// }
-
-
 
 gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr){
     for (int i = 0; i < LAB_HEIGHT; i++){
@@ -66,9 +20,6 @@ gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr){
         }
     }
 }
-
-
-//
 
 
 int main(int argc, char *argv[])
@@ -95,26 +46,9 @@ int main(int argc, char *argv[])
     gtk_builder_connect_signals(builder,NULL);
 
 
-    //Initialize variables
-    mainGrid = GTK_WIDGET(gtk_builder_get_object(builder,"mainGrid"));
-    entryEnergia = GTK_WIDGET(gtk_builder_get_object(builder,"entryEnergia"));
-    entryPeriodo = GTK_WIDGET(gtk_builder_get_object(builder,"entryPeriodo"));
-    buttonAgregar = GTK_WIDGET(gtk_builder_get_object(builder,"buttonAgregar"));
-    labelEnergia = GTK_WIDGET(gtk_builder_get_object(builder,"labelEnergia"));
-    labelPeriodo = GTK_WIDGET(gtk_builder_get_object(builder,"labelPeriodo"));
-    labelAgregarMarciano = GTK_WIDGET(gtk_builder_get_object(builder,"labelAgregarMarciano"));
-    labelSimulacion = GTK_WIDGET(gtk_builder_get_object(builder,"labelSimulacion"));
-    buttonComenzar = GTK_WIDGET(gtk_builder_get_object(builder,"buttonComenzar"));
-    buttonDetener = GTK_WIDGET(gtk_builder_get_object(builder,"buttonDetener"));
-    labelModo = GTK_WIDGET(gtk_builder_get_object(builder,"labelModo"));
-    buttonAutomatico = GTK_WIDGET(gtk_builder_get_object(builder,"buttonAutomatico"));
-    buttonManual = GTK_WIDGET(gtk_builder_get_object(builder,"buttonManual"));
-    labelVelocidad = GTK_WIDGET(gtk_builder_get_object(builder,"labelVelocidad"));
-    buttonAumentarVelocidad = GTK_WIDGET(gtk_builder_get_object(builder,"buttonAumentarVelocidad"));
-    buttonDisminuirVelocidad = GTK_WIDGET(gtk_builder_get_object(builder,"buttonDisminuirVelocidad"));
-    canvasMatriz = GTK_WIDGET(gtk_builder_get_object(builder,"canvasMatriz"));
-    treeEnergiaMarciano = GTK_WIDGET(gtk_builder_get_object(builder,"treeEnergiaMarciano"));
-    builder = GTK_WIDGET(gtk_builder_get_object(builder,"builder"));
+    //Initialize GUI components
+    int inicializeGUI();
+
 
     gtk_widget_show(mainWindow);
     gtk_main();

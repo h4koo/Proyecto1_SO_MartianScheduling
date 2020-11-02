@@ -27,16 +27,6 @@ static int _time_multiplier = 1;
 static position_t _start_position = {0, 4};
 static position_t _end_position = {19, 6};
 
-static int _labyrinth[LAB_HEIGT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                                               {1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-                                               {1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
-                                               {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
-                                               {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1},
-                                               {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1},
-                                               {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
-                                               {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1},
-                                               {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
-                                               {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
 // ++++ External funcs ++++
 int addMartian(martian_t new_martian)
@@ -200,7 +190,7 @@ int moveMartian(int martian_index)
     // }
 
     //try moving up
-    if (up.y >= 0 && up.y < LAB_HEIGT && _labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
+    if (up.y >= 0 && up.y < LAB_HEIGHT && _labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
@@ -220,7 +210,7 @@ int moveMartian(int martian_index)
     }
 
     // try moving down
-    else if (down.y >= 0 && down.y < LAB_HEIGT && _labyrinth[down.y][down.x] == 0 && !(down.y == martian->previous_position.y && down.x == martian->previous_position.x))
+    else if (down.y >= 0 && down.y < LAB_HEIGHT && _labyrinth[down.y][down.x] == 0 && !(down.y == martian->previous_position.y && down.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
