@@ -21,11 +21,19 @@ gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr){
     }
 }
 
+void on_click_start_simulation(){
+    startSimulation();
+}
+
+void on_click_stop_simulation(){
+    endSimulation();
+}
+
 
 int main(int argc, char *argv[])
 {
     // martian_t m;
-    // m.id = 1;
+    // m.id = 1;changeSimulationSpeed
     // m.max_energy = 10;
     // m.name = "lol";
     // m.period = 5;

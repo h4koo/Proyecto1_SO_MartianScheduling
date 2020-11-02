@@ -127,7 +127,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <signal name="clicked" handler="startSimulation" swapped="no"/>
           </object>
           <packing>
             <property name="x">360</property>
