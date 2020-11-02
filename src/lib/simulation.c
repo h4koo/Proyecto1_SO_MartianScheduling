@@ -65,6 +65,8 @@ int addMartian(martian_t new_martian)
     _martians[_num_martians] = new_martian;
     _num_martians++;
 
+    // check if martians are still schedulable !!!!!!!!!!!!!!!!!!!!!!!!!
+
     return 0;
 }
 
@@ -82,11 +84,16 @@ int getNumMartians()
 // starts the simulation loop
 int startSimulation()
 {
+    if (_simulation_state == SIM_INITIAL)
+    {
+        initReport();
+    }
+
     _simulation_state = SIM_RUNNING;
 
     // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
-    // pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
-    simulationLoop();
+    pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
+    // simulationLoop();
 }
 
 // pauses simulation loop
@@ -99,6 +106,7 @@ int pauseSimulation()
 int endSimulation()
 {
     _simulation_state = SIM_FINISHED;
+    endReport();
 }
 
 // makes the simulation go faster (0 < t_mult < 1) or slower  (1 < t_mult)
@@ -351,6 +359,12 @@ void *simulationLoop()
                     break;
                 }
             }
+            // log the moving martian
+            logMartian(mrt);
+        }
+        else
+        {
+            logNOP();
         }
 
         usleep(_time_step);

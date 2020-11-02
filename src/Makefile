@@ -5,8 +5,8 @@ CC = gcc
 APP_NAME = mrtsch.out
 LINKERFLAG = -lm -lpthread
 
-SRCS := lib/simulation.c main.c
-OBJ = lib/simulation.o main.o
+SRCS := lib/simulation.c lib/report.c main.c
+OBJ = lib/simulation.o lib/report.o main.o
 
 
 

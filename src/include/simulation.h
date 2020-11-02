@@ -8,6 +8,7 @@
 #include <unistd.h> // For sleep()
 
 #include "martian.h"
+#include "report.h"
 
 #define TIME_STEP 500 // Simulation time step of 500
 #define MAX_MARTIANS 27
