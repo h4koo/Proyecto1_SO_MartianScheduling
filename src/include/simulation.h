@@ -8,6 +8,7 @@
 #include <unistd.h> // For sleep()
 
 #include "martian.h"
+#include "report.h"
 
 #define TIME_STEP 500 // Simulation time step of 500
 #define MAX_MARTIANS 27
@@ -19,30 +20,39 @@
 #define LAB_HEIGHT 10
 #define LAB_WIDTH 20
 
+enum sim_state
+{
+    SIM_INITIAL,
+    SIM_RUNNING,
+    SIM_PAUSED,
+    SIM_FINISHED,
+    SIM_ERROR
+};
+
 extern int _labyrinth[LAB_HEIGHT][LAB_WIDTH];
 
 // ++++ External funcs ++++
 int addMartian(martian_t new_martian);
 
 // starts the simulation loop
-int startSimulation();
+void startSimulation();
 
 martian_t getMartian(int id);
 
 int getNumMartians();
 
 // pauses simulation loop
-int pauseSimulation();
+void pauseSimulation();
 
 // ends the simulation
-int endSimulation();
+void endSimulation();
 
 // makes the simulation go faster (0 < t_mult < 1) or slower  (1 < t_mult)
 int changeSimulationSpeed(int t_mult);
 
-int makeSimulationSlower();
+void makeSimulationSlower();
 
-int makeSimulationFaster();
+void makeSimulationFaster();
 
 // ++++ Internal funcs ++++
 
@@ -58,6 +68,8 @@ int moveMartian(int martian_index);
 // loop that simulates CPU clock. In charge of managing martians energy and moving them and checking
 void *simulationLoop();
 
+void simulationStep();
+
 void selectAlgRM();
 
 void selectAlgEDF();
@@ -65,5 +77,11 @@ void selectAlgEDF();
 void selectModeAutomatic();
 
 void selectModeManual();
+
+int getSimulationState();
+
+void setSimulationState(enum sim_state state);
+
+int getTimeStep();
 
 #endif

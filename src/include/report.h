@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include "martian.h"
 
-FILE report;
-
 int initReport();
 
 int endReport();
 
-int logMartian(martian_t martian);
+int logMartian(martian_t *martian);
+
+int logNOP();
 
 #endif
