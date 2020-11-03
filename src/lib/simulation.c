@@ -391,6 +391,7 @@ void simulationStep()
     }
     else if (selected_martian_id != NO_SCHEDULING)
     {
+        //FALLA AQUI
         moveMartian(selected_martian_id);
         mrt = _martians + selected_martian_id;
         printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);

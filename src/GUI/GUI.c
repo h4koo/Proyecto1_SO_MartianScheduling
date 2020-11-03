@@ -84,11 +84,6 @@ void on_click_start_simulation()
     pthread_create(&_running_sim_thread, NULL, simulation_loop, NULL);
 }
 
-// void on_click_start_simulation()
-// {
-//     startSimulation();
-// }
-
 void on_click_pause_simulation()
 {
     pauseSimulation();
