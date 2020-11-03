@@ -11,7 +11,7 @@
 #include "report.h"
 
 #define TIME_STEP 500 // Simulation time step of 500
-#define MAX_MARTIANS 27
+#define MAX_MARTIANS 6
 
 #define LAB_EMPTY 0
 #define LAB_WALL 1

@@ -16,6 +16,8 @@ int _labyrinth[LAB_HEIGHT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                          {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
                                          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
+static char* _names[MAX_MARTIANS] = {"A", "B", "C", "D", "E", "F"};
+
 static enum sim_state _simulation_state = SIM_INITIAL;
 
 static enum schd_alg {
@@ -49,6 +51,7 @@ int addMartian(martian_t new_martian)
         return -1;
     }
     new_martian.state = MRTN_RUNNING;
+    new_martian.name = _names[_num_martians];
     new_martian.remaining_energy = 0;
     new_martian.previous_position.x = -1;
     new_martian.previous_position.y = -1;
