@@ -4,6 +4,7 @@
 #include <gtk-3.0/gtk/gtk.h>
 #include <gtk-3.0/gtk/gtkx.h>
 #include "simulation.h"
+#include <string.h>
 
 
 GtkWidget *mainWindow;

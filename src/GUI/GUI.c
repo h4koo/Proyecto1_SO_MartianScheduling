@@ -1,5 +1,18 @@
 #include "../include/GUI.h"
 
+static int firstLoop = 1;
+
+const gchar* valueEnergia;
+const gchar* valuePeriodo;
+
+typedef struct{
+    float r;
+    float g;
+    float b;
+}color_t;
+
+//order of array: red, green, blue, yellow, cyan
+color_t colorArray[5] = {{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0},{1.0,1.0,0.0},{0.0,1.0,1.0}};
 
 int inicializeGUI(){
 
@@ -29,21 +42,23 @@ int inicializeGUI(){
     return 0;
 }
 
-gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr){
-    for (int i = 0; i < LAB_HEIGHT; i++){
-        for (int j = 0; j <LAB_WIDTH; j++){
-            if (_labyrinth[i][j] == 0){
-                //draw white
-                cairo_set_source_rgb(cr,1.0,1.0,1.0); //RGB
-                cairo_rectangle(cr,j*30,i*30,30,30);
-                cairo_fill(cr);
-                cairo_stroke(cr);
-            }
-            else{
-                cairo_set_source_rgb(cr,0.0,0.0,0.0); //RGB
-                cairo_rectangle(cr,j*30,i*30,30,30);
-                cairo_fill(cr);
-                cairo_stroke(cr);
+gboolean drawMaze(GtkDrawingArea *canvasMatriz, cairo_t *cr){
+    if (firstLoop == 1){
+        for (int i = 0; i < LAB_HEIGHT; i++){
+            for (int j = 0; j <LAB_WIDTH; j++){
+                if (_labyrinth[i][j] == 0){
+                    //draw white
+                    cairo_set_source_rgb(cr,1.0,1.0,1.0); //RGB
+                    cairo_rectangle(cr,j*30,i*30,30,30);
+                    cairo_fill(cr);
+                    cairo_stroke(cr);
+                }
+                else{
+                    cairo_set_source_rgb(cr,0.0,0.0,0.0); //RGB
+                    cairo_rectangle(cr,j*30,i*30,30,30);
+                    cairo_fill(cr);
+                    cairo_stroke(cr);
+                }
             }
         }
     }
@@ -83,4 +98,22 @@ void select_RM(){
 
 void select_EDF(){
     selectAlgEDF();
+}
+
+void add_martian(){
+    int energy = atoi(valueEnergia);
+    int period = atoi(valuePeriodo);
+
+    martian_t martian;
+    martian.max_energy = energy;
+    martian.period = period;
+    addMartian(martian);
+}
+
+void getEnergia(GtkEntry *entryEnergia){
+    valueEnergia = gtk_entry_get_text(GTK_ENTRY(entryEnergia));
+}
+
+void getPeriodo(GtkEntry *entryPeriodo){
+    valuePeriodo = gtk_entry_get_text(GTK_ENTRY(entryPeriodo));
 }
