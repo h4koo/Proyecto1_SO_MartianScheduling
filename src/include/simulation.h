@@ -40,6 +40,10 @@ int endSimulation();
 // makes the simulation go faster (0 < t_mult < 1) or slower  (1 < t_mult)
 int changeSimulationSpeed(int t_mult);
 
+int makeSimulationSlower();
+
+int makeSimulationFaster();
+
 // ++++ Internal funcs ++++
 
 // returns index of the next martian to move acording to RM scheduling

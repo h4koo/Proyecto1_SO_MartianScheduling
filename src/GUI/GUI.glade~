@@ -127,6 +127,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_click_start_simulation" swapped="no"/>
           </object>
           <packing>
             <property name="x">360</property>
@@ -141,7 +142,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <signal name="clicked" handler="pauseSimulation" swapped="no"/>
+            <signal name="clicked" handler="on_click_stop_simulation" swapped="no"/>
           </object>
           <packing>
             <property name="x">505</property>
@@ -174,6 +175,7 @@
             <property name="receives_default">False</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
+            <signal name="toggled" handler="select_automatic" swapped="no"/>
           </object>
           <packing>
             <property name="x">430</property>
@@ -191,6 +193,7 @@
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
             <property name="group">buttonAutomatico</property>
+            <signal name="toggled" handler="select_manual" swapped="no"/>
           </object>
           <packing>
             <property name="x">532</property>
@@ -221,6 +224,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_click_reduce_speed" swapped="no"/>
           </object>
           <packing>
             <property name="x">460</property>
@@ -235,6 +239,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_click_increase_speed" swapped="no"/>
           </object>
           <packing>
             <property name="x">550</property>

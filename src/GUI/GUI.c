@@ -25,3 +25,50 @@ int inicializeGUI(){
 
     return 0;
 }
+
+gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr){
+    for (int i = 0; i < LAB_HEIGHT; i++){
+        for (int j = 0; j <LAB_WIDTH; j++){
+            if (_labyrinth[i][j] == 0){
+                //draw white
+                cairo_set_source_rgb(cr,1.0,1.0,1.0); //RGB
+                cairo_rectangle(cr,j*30,i*30,30,30);
+                cairo_fill(cr);
+                cairo_stroke(cr);
+            }
+            else{
+                cairo_set_source_rgb(cr,0.0,0.0,0.0); //RGB
+                cairo_rectangle(cr,j*30,i*30,30,30);
+                cairo_fill(cr);
+                cairo_stroke(cr);
+            }
+        }
+    }
+}
+
+void on_click_start_simulation(){
+    startSimulation();
+}
+
+void on_click_stop_simulation(){
+    endSimulation();
+}
+
+void on_click_increase_speed(){
+    makeSimulationFaster();
+}
+
+
+void on_click_reduce_speed(){
+    makeSimulationSlower();
+}
+
+
+void select_automatic(){
+    modo = true;
+}
+
+
+void select_manual(){
+    modo = false;
+}
