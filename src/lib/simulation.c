@@ -378,3 +378,20 @@ void *simulationLoop()
         /* code */
     }
 }
+
+
+void selectAlgRM(){
+    _selected_alg = RATE_MONOTONIC;
+}
+
+void selectAlgEDF(){
+    _selected_alg = EARLIEST_DEADLINE_FIRST;
+}
+
+void selectModeAutomatic(){
+    _sim_mode = AUTO;
+}
+
+void selectModeManual(){
+    _sim_mode = MANUAL;
+}
