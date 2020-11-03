@@ -17,8 +17,10 @@
 #define LAB_WALL 1
 #define LAB_MARTIAN 2
 
-#define LAB_HEIGT 10
+#define LAB_HEIGHT 10
 #define LAB_WIDTH 20
+
+extern int _labyrinth[LAB_HEIGHT][LAB_WIDTH];
 
 // ++++ External funcs ++++
 int addMartian(martian_t new_martian);
