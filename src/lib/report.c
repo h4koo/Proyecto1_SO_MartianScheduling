@@ -11,6 +11,7 @@ int initReport()
         return -1;
         // exit(1);
     }
+    return 0;
 }
 
 int endReport()
@@ -23,14 +24,22 @@ int endReport()
         printf("Error trying to close the report file");
         return -1;
     }
+    return 0;
 }
 
 int logMartian(martian_t *martian)
 {
-    fprintf(_report, "%s\n", martian->name);
+    int wr_byte = fprintf(_report, "%s\n", martian->name);
+
+    if (wr_byte < 0)
+        return -1;
+    return 0;
 }
 
 int logNOP()
 {
-    fprintf(_report, "NOP\n");
+    int wr_byte = fprintf(_report, "NOP\n");
+    if (wr_byte < 0)
+        return -1;
+    return 0;
 }

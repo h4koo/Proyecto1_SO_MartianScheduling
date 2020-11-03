@@ -2,7 +2,7 @@
 *.d
 .vscode
 
-
+report.txt
 # Object files
 *.o
 *.ko

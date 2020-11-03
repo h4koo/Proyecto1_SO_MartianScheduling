@@ -5,7 +5,6 @@
 #include <gtk-3.0/gtk/gtkx.h>
 #include "simulation.h"
 
-
 GtkWidget *mainWindow;
 GtkWidget *mainGrid;
 GtkWidget *entryEnergia;
@@ -29,7 +28,6 @@ GtkWidget *treeEnergiaMarciano;
 GtkWidget *buttonRM;
 GtkWidget *buttonEDF;
 GtkBuilder *builder;
-
 
 //Initialize GUI components
 int inicializeGUI();
@@ -61,5 +59,7 @@ void select_RM();
 //Select EDF Algorithm
 void select_EDF();
 
+//Simulation loop
+void *simulation_loop();
 
 #endif
