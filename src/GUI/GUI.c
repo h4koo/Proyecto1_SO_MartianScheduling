@@ -58,16 +58,13 @@ void on_click_increase_speed(){
     makeSimulationFaster();
 }
 
-
 void on_click_reduce_speed(){
     makeSimulationSlower();
 }
 
-
 void select_automatic(){
     modo = true;
 }
-
 
 void select_manual(){
     modo = false;
