@@ -45,11 +45,6 @@ class VisualGUI:
                 frecuencyArray[-1] += 1
                 total += 1
 
-        print(processArray)
-        # print(frecuencyArray)
-        # print(total)
-        # print(elements)
-
         self.drawData(self.canvasWidth//total,self.canvasHeight//elements, processArray,frecuencyArray,total,elements,singleArray)
 
 
@@ -62,7 +57,6 @@ class VisualGUI:
         for i in range(len(processArray)):
             frec = frecuencyArray[i]
             y = singleArray.index(processArray[i])
-            print(y)
             color = self.colorPicker(y)
 
             for j in range(frec):
