@@ -85,8 +85,8 @@ int startSimulation()
     _simulation_state = SIM_RUNNING;
 
     // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
-    // pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
-    simulationLoop();
+    pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
+    // simulationLoop();
 }
 
 // pauses simulation loop
@@ -363,4 +363,21 @@ void *simulationLoop()
     {
         /* code */
     }
+}
+
+
+void selectAlgRM(){
+    _selected_alg = RATE_MONOTONIC;
+}
+
+void selectAlgEDF(){
+    _selected_alg = EARLIEST_DEADLINE_FIRST;
+}
+
+void selectModeAutomatic(){
+    _sim_mode = AUTO;
+}
+
+void selectModeManual(){
+    _sim_mode = MANUAL;
 }

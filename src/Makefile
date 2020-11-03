@@ -3,7 +3,7 @@
 #compiler
 CC = gcc
 APP_NAME = mrtsch.out
-LINKERFLAG = -lm -lpthread
+LINKERFLAG = -lm -lpthread `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
 
 SRCS := lib/simulation.c GUI/GUI.c
 OBJ = lib/simulation.o GUI/GUI.o
@@ -16,7 +16,7 @@ compile : $(OBJ)
 	$(CC) $(OBJ) -o $(APP_NAME) $(LINKERFLAG)
 
 compileGUI:
-	gcc -g -o mrtsch.out main.c $(SRCS) -lm `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+	gcc -g -o mrtsch.out main.c $(SRCS) $(LINKERFLAG)  
 # lib/simulation.o : include/simulation.h
 
 clean :

@@ -121,8 +121,8 @@
         </child>
         <child>
           <object class="GtkButton" id="buttonComenzar">
-            <property name="label" translatable="yes">Comenzar</property>
-            <property name="width_request">135</property>
+            <property name="label" translatable="yes">Start</property>
+            <property name="width_request">93</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -136,8 +136,8 @@
         </child>
         <child>
           <object class="GtkButton" id="buttonDetener">
-            <property name="label" translatable="yes">Detener</property>
-            <property name="width_request">135</property>
+            <property name="label" translatable="yes">Stop</property>
+            <property name="width_request">93</property>
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -145,7 +145,7 @@
             <signal name="clicked" handler="on_click_stop_simulation" swapped="no"/>
           </object>
           <packing>
-            <property name="x">505</property>
+            <property name="x">550</property>
             <property name="y">495</property>
           </packing>
         </child>
@@ -249,7 +249,7 @@
         <child>
           <object class="GtkDrawingArea" id="canvasMatriz">
             <property name="width_request">630</property>
-            <property name="height_request">435</property>
+            <property name="height_request">385</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <signal name="draw" handler="drawMaze" swapped="no"/>
@@ -272,6 +272,55 @@
           <packing>
             <property name="x">650</property>
             <property name="y">10</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioButton" id="buttonRM">
+            <property name="label" translatable="yes">RM</property>
+            <property name="width_request">140</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+            <signal name="toggled" handler="select_RM" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">180</property>
+            <property name="y">405</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioButton" id="buttonEDF">
+            <property name="label" translatable="yes">EDF</property>
+            <property name="width_request">140</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+            <property name="group">buttonRM</property>
+            <signal name="group-changed" handler="select_EDF" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">360</property>
+            <property name="y">405</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonPausar">
+            <property name="label" translatable="yes">Pause</property>
+            <property name="width_request">93</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+          </object>
+          <packing>
+            <property name="x">455</property>
+            <property name="y">495</property>
           </packing>
         </child>
       </object>

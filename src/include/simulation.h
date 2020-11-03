@@ -58,4 +58,12 @@ int moveMartian(int martian_index);
 // loop that simulates CPU clock. In charge of managing martians energy and moving them and checking
 void *simulationLoop();
 
+void selectAlgRM();
+
+void selectAlgEDF();
+
+void selectModeAutomatic();
+
+void selectModeManual();
+
 #endif

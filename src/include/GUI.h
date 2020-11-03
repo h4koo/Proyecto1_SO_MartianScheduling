@@ -3,6 +3,7 @@
 
 #include <gtk-3.0/gtk/gtk.h>
 #include <gtk-3.0/gtk/gtkx.h>
+#include "simulation.h"
 
 
 GtkWidget *mainWindow;
@@ -15,6 +16,7 @@ GtkWidget *labelPeriodo;
 GtkWidget *labelAgregarMarciano;
 GtkWidget *labelSimulacion;
 GtkWidget *buttonComenzar;
+GtkWidget *buttonPausar;
 GtkWidget *buttonDetener;
 GtkWidget *labelModo;
 GtkWidget *buttonAutomatico;
@@ -24,10 +26,9 @@ GtkWidget *buttonAumentarVelocidad;
 GtkWidget *buttonDisminuirVelocidad;
 GtkWidget *canvasMatriz;
 GtkWidget *treeEnergiaMarciano;
+GtkWidget *buttonRM;
+GtkWidget *buttonEDF;
 GtkBuilder *builder;
-
-
-bool modo = true;
 
 
 //Initialize GUI components
@@ -53,4 +54,12 @@ void select_automatic();
 
 //Manual Mode Select
 void select_manual();
+
+//Select RM Algorithm
+void select_RM();
+
+//Select EDF Algorithm
+void select_EDF();
+
+
 #endif
