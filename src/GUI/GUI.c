@@ -10,12 +10,12 @@ GtkWidget* arrayEnergyButton[MAX_MARTIANS];
 GtkWidget* arrayEnergyImage[MAX_MARTIANS];
 GtkWidget* arrayEnergyLabel[MAX_MARTIANS];
 
-char* arraySprites[6] =    {"/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/red.png",
-                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/green.png",
-                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/blue.png",
-                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/yellow.png",
-                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/magenta.png",
-                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/cyan.png"};
+char* arraySprites[6] =    {"GUI/img/red.png",
+                            "GUI/img/green.png",
+                            "GUI/img/blue.png",
+                            "GUI/img/yellow.png",
+                            "GUI/img/magenta.png",
+                            "GUI/img/cyan.png"};
 
 static pthread_t _running_sim_thread;
 
@@ -62,9 +62,9 @@ void insertButtons()
 
             if (_labyrinth[row][column] == 0)
             {
-                arrayImagenes[row][column] = gtk_image_new_from_file ("/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/white.png");
+                arrayImagenes[row][column] = gtk_image_new_from_file ("GUI/img/white.png");
             }else{
-                arrayImagenes[row][column] = gtk_image_new_from_file ("/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/black.png");
+                arrayImagenes[row][column] = gtk_image_new_from_file ("GUI/img/black.png");
             }
 
             gtk_button_set_image((GtkButton*)arrayButtons[row][column],(GtkWidget*)arrayImagenes[row][column]);
@@ -159,9 +159,9 @@ void drawMartian(){
 
     for (int i = 0; i < numMartians; i++)
     {
-        gtk_image_set_from_file((GtkImage*)arrayImagenes[arrayMartians[i].previous_position.y][arrayMartians[i].previous_position.x],
-        "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/white.png");
-        gtk_image_set_from_file((GtkImage*)arrayImagenes[arrayMartians[i].position.y][arrayMartians[i].position.x],arraySprites[i]);
+        martian_t m = arrayMartians[i];
+        gtk_image_set_from_file(arrayImagenes[m.previous_position.y][m.previous_position.x],"GUI/img/white.png");
+        gtk_image_set_from_file(arrayImagenes[m.position.y][m.position.x],arraySprites[i]);
     }
 }
 
