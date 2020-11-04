@@ -8,8 +8,10 @@ int initReport();
 
 int endReport();
 
-int logMartian(martian_t *martian);
+int logRMMartian(martian_t *martian);
+int logEDFMartian(martian_t *martian);
 
-int logNOP();
+int logRMNOP();
+int logEDFNOP();
 
 #endif

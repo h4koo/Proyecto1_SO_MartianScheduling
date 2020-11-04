@@ -63,7 +63,7 @@ int rateMonotonicScheduling();
 int earliestDeadlineFirst();
 
 // makes a semi-random movement of a mratian in the labyrinth
-int moveMartian(int martian_index);
+int moveMartian(int martian_index, martian_t *martian_list);
 
 // loop that simulates CPU clock. In charge of managing martians energy and moving them and checking
 void *simulationLoop();

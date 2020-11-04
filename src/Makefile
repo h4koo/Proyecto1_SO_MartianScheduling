@@ -22,4 +22,5 @@ compileGUI:
 clean :
 	# rm -v lib/*.o
 	# rm -v *.o
+	rm *_report.txt
 	rm $(APP_NAME)
