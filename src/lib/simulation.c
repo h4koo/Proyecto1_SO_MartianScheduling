@@ -18,7 +18,8 @@ int _labyrinth[LAB_HEIGHT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 
 static char* _names[MAX_MARTIANS] = {"A", "B", "C", "D", "E", "F"};
 
-static enum sim_state _simulation_state = SIM_INITIAL;
+static enum sim_state _rm_simulation_state = SIM_INITIAL;
+static enum sim_state _edf_simulation_state = SIM_INITIAL;
 
 static enum schd_alg {
     RATE_MONOTONIC,
@@ -30,9 +31,12 @@ static enum app_mode {
     MANUAL
 } _sim_mode;
 
-static martian_t _martians[MAX_MARTIANS];
+static martian_t _rm_martians[MAX_MARTIANS];
+static martian_t _edf_martians[MAX_MARTIANS];
 static int _num_martians = 0;
-static int _completed_martians = 0;
+
+static int _rm_completed_martians = 0;
+static int _edf_completed_martians = 0;
 static pthread_t _running_sim_thread;
 
 static int _sim_timer = 0;
@@ -57,7 +61,8 @@ int addMartian(martian_t new_martian)
     new_martian.previous_position.y = -1;
     new_martian.position.x = _start_position.x;
     new_martian.position.y = _start_position.y;
-    _martians[_num_martians] = new_martian;
+    _edf_martians[_num_martians] = new_martian;
+    _rm_martians[_num_martians] = new_martian;
     _num_martians++;
 
     // check if martians are still schedulable !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -67,12 +72,13 @@ int addMartian(martian_t new_martian)
 
 martian_t getMartian(int id)
 {
-    return _martians[id];
+
+    return _rm_martians[id];
 }
 
 martian_t* getMartianList()
 {
-    return _martians;
+    return _rm_martians;
 }
 
 int getNumMartians()
@@ -83,12 +89,13 @@ int getNumMartians()
 // starts the simulation loop
 void startSimulation()
 {
-    if (_simulation_state == SIM_INITIAL)
+    if (_rm_simulation_state == SIM_INITIAL)
     {
         initReport();
     }
 
-    _simulation_state = SIM_RUNNING;
+    _rm_simulation_state = SIM_RUNNING;
+    _edf_simulation_state = SIM_RUNNING;
 
     // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
     pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
@@ -98,13 +105,15 @@ void startSimulation()
 // pauses simulation loop
 void pauseSimulation()
 {
-    _simulation_state = SIM_PAUSED;
+    _rm_simulation_state = SIM_PAUSED;
+    _edf_simulation_state = SIM_PAUSED;
 }
 
 // ends the simulation
 void endSimulation()
 {
-    _simulation_state = SIM_FINISHED;
+    _rm_simulation_state = SIM_FINISHED;
+    _edf_simulation_state = SIM_FINISHED;
 }
 
 // makes the simulation go faster (0 < t_mult < 1) or slower  (1 < t_mult)
@@ -141,7 +150,7 @@ int rateMonotonicScheduling()
 
     for (int i = 0; i < _num_martians; ++i)
     {
-        mrt = _martians + i;
+        mrt = _rm_martians + i;
 
         // if the martian already completed
         if (mrt->state == MRTN_COMPLETED)
@@ -157,7 +166,7 @@ int rateMonotonicScheduling()
             if (mrt->remaining_energy > 0)
             {
                 printf("ERROR SCHEDULING RM: Martian %s was unable to complete past work before starting new one\n", mrt->name);
-                _simulation_state = SIM_ERROR;
+                _rm_simulation_state = SIM_ERROR;
                 return SCHEDULING_ERROR;
             }
             else
@@ -176,7 +185,7 @@ int rateMonotonicScheduling()
             }
         }
     } // end for
-    _completed_martians = completed_mrt;
+    _rm_completed_martians = completed_mrt;
     return selected_id;
 }
 
@@ -193,7 +202,7 @@ int earliestDeadlineFirst()
 
     for (int i = 0; i < _num_martians; ++i)
     {
-        mrt = _martians + i;
+        mrt = _edf_martians + i;
 
         // if the martian already completed
         if (mrt->state == MRTN_COMPLETED)
@@ -208,7 +217,7 @@ int earliestDeadlineFirst()
             if (mrt->remaining_energy > 0)
             {
                 printf("ERROR SCHEDULING RM: Martian %s was unable to complete past work before starting new one\n", mrt->name);
-                _simulation_state = SIM_ERROR;
+                _edf_simulation_state = SIM_ERROR;
                 return SCHEDULING_ERROR;
             }
             else
@@ -231,15 +240,15 @@ int earliestDeadlineFirst()
         }
     } // end for
 
-    _completed_martians = completed_mrt;
+    _edf_completed_martians = completed_mrt;
     return selected_id;
 }
 
 // makes a semi-random movement of a martian in the labyrinth
-int moveMartian(int martian_index)
+int moveMartian(int martian_index, martian_t *martian_list)
 {
 
-    martian_t *martian = _martians + martian_index;
+    martian_t *martian = martian_list + martian_index;
     position_t up = martian->position, down = martian->position, right = martian->position, left = martian->position;
     --up.y;
     ++down.y;
@@ -330,7 +339,7 @@ void *simulationLoop()
     int selected_martian_id;
     martian_t *mrt;
 
-    while (_simulation_state == SIM_RUNNING)
+    while (_rm_simulation_state == SIM_RUNNING)
     {
         if (_selected_alg == RATE_MONOTONIC)
         {
@@ -345,24 +354,24 @@ void *simulationLoop()
             break;
         if (selected_martian_id != NO_SCHEDULING)
         {
-            moveMartian(selected_martian_id);
-            mrt = _martians + selected_martian_id;
+            moveMartian(selected_martian_id, _rm_martians);
+            mrt = _rm_martians + selected_martian_id;
             printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
             if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
             {
                 mrt->state = MRTN_COMPLETED;
-                if (++_completed_martians == _num_martians)
+                if (++_rm_completed_martians == _num_martians)
                 {
-                    _simulation_state = SIM_FINISHED;
+                    _rm_simulation_state = SIM_FINISHED;
                     break;
                 }
             }
             // log the moving martian
-            logMartian(mrt);
+            logRMMartian(mrt);
         }
         else
         {
-            logNOP();
+            logRMNOP();
         }
 
         usleep(_time_step);
@@ -371,7 +380,7 @@ void *simulationLoop()
     } // end while
     printf("Completed simulation time is: %d \n", _sim_timer);
 
-    if (_simulation_state == SIM_FINISHED || _simulation_state == SIM_ERROR)
+    if (_rm_simulation_state == SIM_FINISHED || _rm_simulation_state == SIM_ERROR)
     {
         /* code */
     }
@@ -380,44 +389,94 @@ void *simulationLoop()
 
 void simulationStep()
 {
-    int selected_martian_id;
+    // int selected_martian_id;
     martian_t *mrt;
 
-    if (_selected_alg == RATE_MONOTONIC)
-    {
-        selected_martian_id = rateMonotonicScheduling();
-    }
-    else
-    {
-        selected_martian_id = earliestDeadlineFirst();
-    }
+    int rm_martian_id = rateMonotonicScheduling();
+    int edf_martian_id = earliestDeadlineFirst();
 
-    if (selected_martian_id == SCHEDULING_ERROR)
+    // if (_selected_alg == RATE_MONOTONIC)
+    // {
+    //     selected_martian_id = rm_martian_id;
+    // }
+    // else
+    // {
+    //     selected_martian_id = edf_martian_id;
+    // }
+
+    // if (selected_martian_id == SCHEDULING_ERROR)
+    // {
+    //     _simulation_state = SIM_ERROR;
+    // }
+    // else if (selected_martian_id != NO_SCHEDULING)
+    // {
+    //     moveMartian(selected_martian_id);
+    //     mrt = _rm_martians + selected_martian_id;
+    //     printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
+    //     if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
+    //     {
+    //         mrt->state = MRTN_COMPLETED;
+    //         if (++_completed_martians == _num_martians)
+    //         {
+    //             _simulation_state = SIM_FINISHED;
+    //         }
+    //     }
+    //     // log the moving martian
+    //     // logMartian(mrt);
+    // }
+    // else
+    // {
+    //     // logNOP();
+    //     printf("No scheduling\n");
+    // }
+
+    // make loggin for both algorithms
+    if (rm_martian_id == NO_SCHEDULING)
+        logRMNOP();
+    else if (rm_martian_id != SCHEDULING_ERROR)
     {
-        _simulation_state = SIM_ERROR;
-    }
-    else if (selected_martian_id != NO_SCHEDULING)
-    {
-        //FALLA AQUI
-        moveMartian(selected_martian_id);
-        mrt = _martians + selected_martian_id;
+        logRMMartian(_rm_martians + rm_martian_id);
+
+        moveMartian(rm_martian_id, _rm_martians);
+        mrt = _rm_martians + rm_martian_id;
         printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
         if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
         {
             mrt->state = MRTN_COMPLETED;
-            if (++_completed_martians == _num_martians)
+            if (++_rm_completed_martians == _num_martians)
             {
-                _simulation_state = SIM_FINISHED;
+                _rm_simulation_state = SIM_FINISHED;
             }
         }
-        // log the moving martian
-        logMartian(mrt);
     }
     else
     {
-        logNOP();
-        printf("No scheduling\n");
+        _rm_simulation_state = SIM_ERROR;
     }
+
+    if (edf_martian_id == NO_SCHEDULING)
+        logEDFNOP();
+    else if (edf_martian_id != SCHEDULING_ERROR)
+    {
+        logEDFMartian(_edf_martians + edf_martian_id);
+
+        moveMartian(edf_martian_id, _edf_martians);
+        mrt = _edf_martians + edf_martian_id;
+        printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
+        if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
+        {
+            mrt->state = MRTN_COMPLETED;
+            if (++_rm_completed_martians == _num_martians)
+            {
+                _rm_simulation_state = SIM_FINISHED;
+            }
+        }
+    }
+    else
+    {
+        _edf_simulation_state = SIM_ERROR;
+    }
+
     printf("Simulation time is: %d \n", _sim_timer);
     ++_sim_timer;
 }
@@ -444,12 +503,18 @@ void selectModeManual()
 
 int getSimulationState()
 {
-    return _simulation_state;
+    return _selected_alg == RATE_MONOTONIC ? _rm_simulation_state : _edf_simulation_state;
 }
 
 void setSimulationState(enum sim_state state)
 {
-    _simulation_state = state;
+    if (_selected_alg == RATE_MONOTONIC)
+    {
+        _rm_simulation_state = state;
+    }
+    else
+
+        _edf_simulation_state = state;
 }
 
 int getTimeStep()
@@ -463,7 +528,7 @@ void resetSimulation()
     martian_t *mrt;
     for (size_t i = 0; i < _num_martians; i++)
     {
-        mrt = _martians + i;
+        mrt = _rm_martians + i;
         mrt->remaining_energy = 0;
         mrt->state = MRTN_RUNNING;
         mrt->position.x = _start_position.x;

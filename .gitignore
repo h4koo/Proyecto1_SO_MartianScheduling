@@ -2,7 +2,8 @@
 *.d
 .vscode
 
-report.txt
+rm_report.txt
+edf_report.txt
 # Object files
 *.o
 *.ko
