@@ -67,8 +67,12 @@ int addMartian(martian_t new_martian)
 
 martian_t getMartian(int id)
 {
-
     return _martians[id];
+}
+
+martian_t getMartianList()
+{
+    return *_martians;
 }
 
 int getNumMartians()

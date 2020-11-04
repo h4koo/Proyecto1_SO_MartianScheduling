@@ -25,7 +25,6 @@
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="buffer">entrybuffer1</property>
             <property name="input_purpose">number</property>
             <signal name="insert-text" handler="getEnergia" swapped="no"/>
           </object>
@@ -40,7 +39,6 @@
             <property name="height_request">40</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="buffer">entrybuffer2</property>
             <property name="input_purpose">number</property>
             <signal name="insert-text" handler="getPeriodo" swapped="no"/>
           </object>

@@ -44,7 +44,8 @@ int inicializeGUI()
     return 0;
 }
 
-gboolean drawMaze(GtkDrawingArea *canvasMatriz, cairo_t *cr){
+gboolean drawMaze(GtkDrawingArea *canvasMatriz, cairo_t *cr)
+{
     if (firstLoop == 1){
         for (int i = 0; i < LAB_HEIGHT; i++){
             for (int j = 0; j <LAB_WIDTH; j++){
@@ -65,6 +66,11 @@ gboolean drawMaze(GtkDrawingArea *canvasMatriz, cairo_t *cr){
         }
     }
     return 1;
+}
+
+gboolean drawMartian(GtkDrawingArea *canvasMatriz, cairo_t *cr)
+{
+    
 }
 
 void on_click_start_simulation()
@@ -124,7 +130,8 @@ void select_EDF()
     selectAlgEDF();
 }
 
-void add_martian(){
+void add_martian()
+{
     int energy = atoi(valueEnergia);
     int period = atoi(valuePeriodo);
 
@@ -134,13 +141,16 @@ void add_martian(){
     addMartian(martian);
 }
 
-void getEnergia(GtkEntry *entryEnergia){
+void getEnergia(GtkEntry *entryEnergia)
+{
     valueEnergia = gtk_entry_get_text(GTK_ENTRY(entryEnergia));
 }
 
-void getPeriodo(GtkEntry *entryPeriodo){
+void getPeriodo(GtkEntry *entryPeriodo)
+{
     valuePeriodo = gtk_entry_get_text(GTK_ENTRY(entryPeriodo));
 }
+
 void *simulation_loop()
 {
     enum sim_state state;

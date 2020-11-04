@@ -34,7 +34,9 @@ GtkBuilder *builder;
 int inicializeGUI();
 
 //Draw Matrix
-gboolean drawMaze(GtkDrawingArea *widget, cairo_t *cr);
+gboolean drawMaze(GtkDrawingArea *canvasMatriz, cairo_t *cr);
+
+gboolean drawMartian(GtkDrawingArea *canvasMatriz, cairo_t *cr);
 
 //Start Simulation
 void on_click_start_simulation();
