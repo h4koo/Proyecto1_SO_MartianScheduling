@@ -39,7 +39,7 @@ void startSimulation();
 
 martian_t getMartian(int id);
 
-martian_t getMartianList();
+martian_t* getMartianList();
 
 int getNumMartians();
 

@@ -24,19 +24,16 @@ GtkWidget *buttonManual;
 GtkWidget *labelVelocidad;
 GtkWidget *buttonAumentarVelocidad;
 GtkWidget *buttonDisminuirVelocidad;
-GtkWidget *canvasMatriz;
 GtkWidget *treeEnergiaMarciano;
 GtkWidget *buttonRM;
 GtkWidget *buttonEDF;
+GtkWidget *matrixGrid;
 GtkBuilder *builder;
 
 //Initialize GUI components
 int inicializeGUI();
 
-//Draw Matrix
-gboolean drawMaze(GtkDrawingArea *canvasMatriz, cairo_t *cr);
-
-gboolean drawMartian(GtkDrawingArea *canvasMatriz, cairo_t *cr);
+void insertButtons();
 
 //Start Simulation
 void on_click_start_simulation();

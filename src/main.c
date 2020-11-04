@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
 
 
     //Initialize GUI components
-    int inicializeGUI();
+    inicializeGUI();
 
 
-    gtk_widget_show(mainWindow);
+    gtk_widget_show_all(mainWindow);
     gtk_main();
     return EXIT_SUCCESS;
 

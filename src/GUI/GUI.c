@@ -1,23 +1,15 @@
 #include "../include/GUI.h"
 
-static int firstLoop = 1;
-
 const gchar* valueEnergia;
 const gchar* valuePeriodo;
 
-typedef struct{
-    float r;
-    float g;
-    float b;
-}color_t;
+GtkWidget* arrayButtons[LAB_HEIGHT][LAB_WIDTH];
+GtkWidget* arrayImagenes[LAB_HEIGHT][LAB_WIDTH];
 
-//order of array: red, green, blue, yellow, cyan
-color_t colorArray[5] = {{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0},{1.0,1.0,0.0},{0.0,1.0,1.0}};
 static pthread_t _running_sim_thread;
 
 int inicializeGUI()
 {
-
     mainGrid = GTK_WIDGET(gtk_builder_get_object(builder, "mainGrid"));
     entryEnergia = GTK_WIDGET(gtk_builder_get_object(builder, "entryEnergia"));
     entryPeriodo = GTK_WIDGET(gtk_builder_get_object(builder, "entryPeriodo"));
@@ -35,42 +27,40 @@ int inicializeGUI()
     labelVelocidad = GTK_WIDGET(gtk_builder_get_object(builder, "labelVelocidad"));
     buttonAumentarVelocidad = GTK_WIDGET(gtk_builder_get_object(builder, "buttonAumentarVelocidad"));
     buttonDisminuirVelocidad = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDisminuirVelocidad"));
-    canvasMatriz = GTK_WIDGET(gtk_builder_get_object(builder, "canvasMatriz"));
     treeEnergiaMarciano = GTK_WIDGET(gtk_builder_get_object(builder, "treeEnergiaMarciano"));
     buttonRM = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRM"));
     buttonEDF = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEDF"));
+
+    matrixGrid = GTK_WIDGET(gtk_builder_get_object(builder, "matrixGrid"));
+
     builder = GTK_BUILDER(gtk_builder_get_object(builder, "builder"));
+
+    insertButtons();
 
     return 0;
 }
 
-gboolean drawMaze(GtkDrawingArea *canvasMatriz, cairo_t *cr)
+void insertButtons()
 {
-    if (firstLoop == 1){
-        for (int i = 0; i < LAB_HEIGHT; i++){
-            for (int j = 0; j <LAB_WIDTH; j++){
-                if (_labyrinth[i][j] == 0){
-                    //draw white
-                    cairo_set_source_rgb(cr,1.0,1.0,1.0); //RGB
-                    cairo_rectangle(cr,j*30,i*30,30,30);
-                    cairo_fill(cr);
-                    cairo_stroke(cr);
-                }
-                else{
-                    cairo_set_source_rgb(cr,0.0,0.0,0.0); //RGB
-                    cairo_rectangle(cr,j*30,i*30,30,30);
-                    cairo_fill(cr);
-                    cairo_stroke(cr);
-                }
+    for (int row = 0 ; row < LAB_HEIGHT ; ++row)
+    {
+        for(int column = 0 ; column < LAB_WIDTH ; ++column)
+        {
+            arrayButtons[row][column] = gtk_button_new();
+
+            if (_labyrinth[row][column] == 0)
+            {
+                arrayImagenes[row][column] = gtk_image_new_from_file ("/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/white.png");
+            }else{
+                arrayImagenes[row][column] = gtk_image_new_from_file ("/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/black.png");
             }
+
+            gtk_button_set_image((GtkButton*)arrayButtons[row][column],(GtkWidget*)arrayImagenes[row][column]);
+
+
+            gtk_grid_attach((GtkGrid*) matrixGrid, arrayButtons[row][column], column, row, 1,1);
         }
     }
-    return 1;
-}
-
-gboolean drawMartian(GtkDrawingArea *canvasMatriz, cairo_t *cr)
-{
-    
 }
 
 void on_click_start_simulation()

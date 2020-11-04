@@ -70,9 +70,9 @@ martian_t getMartian(int id)
     return _martians[id];
 }
 
-martian_t getMartianList()
+martian_t* getMartianList()
 {
-    return *_martians;
+    return _martians;
 }
 
 int getNumMartians()
