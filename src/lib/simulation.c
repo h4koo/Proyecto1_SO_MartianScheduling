@@ -72,13 +72,20 @@ int addMartian(martian_t new_martian)
 
 martian_t getMartian(int id)
 {
-
-    return _rm_martians[id];
+    if (_selected_alg == RATE_MONOTONIC){
+        return _rm_martians[id];
+    }else{
+        return _edf_martians[id];
+    }
 }
 
 martian_t* getMartianList()
 {
-    return _rm_martians;
+    if (_selected_alg == RATE_MONOTONIC){
+        return _rm_martians;
+    }else{
+        return _edf_martians;
+    }
 }
 
 int getNumMartians()

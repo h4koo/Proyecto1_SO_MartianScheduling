@@ -6,6 +6,13 @@ const gchar* valuePeriodo;
 GtkWidget* arrayButtons[LAB_HEIGHT][LAB_WIDTH];
 GtkWidget* arrayImagenes[LAB_HEIGHT][LAB_WIDTH];
 
+char* arraySprites[6] =    {"/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/red.png",
+                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/green.png",
+                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/blue.png",
+                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/yellow.png",
+                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/magenta.png",
+                            "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/cyan.png"};
+
 static pthread_t _running_sim_thread;
 
 int inicializeGUI()
@@ -141,12 +148,26 @@ void getPeriodo(GtkEntry *entryPeriodo)
     valuePeriodo = gtk_entry_get_text(GTK_ENTRY(entryPeriodo));
 }
 
+void drawMartian(){
+    martian_t* arrayMartians = getMartianList();
+    int numMartians = getNumMartians();
+
+    for (int i = 0; i < numMartians; i++)
+    {
+        gtk_image_set_from_file((GtkImage*)arrayImagenes[arrayMartians[i].previous_position.y][arrayMartians[i].previous_position.x],
+        "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/white.png");
+        gtk_image_set_from_file((GtkImage*)arrayImagenes[arrayMartians[i].position.y][arrayMartians[i].position.x],arraySprites[i]);
+    }
+}
+
+
 void *simulation_loop()
 {
     enum sim_state state;
     while (getSimulationState() == SIM_RUNNING)
     {
         simulationStep();
+        drawMartian();
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
