@@ -28,6 +28,7 @@ GtkWidget *treeEnergiaMarciano;
 GtkWidget *buttonRM;
 GtkWidget *buttonEDF;
 GtkWidget *matrixGrid;
+GtkWidget *energyGrid;
 GtkBuilder *builder;
 
 //Initialize GUI components
@@ -58,6 +59,10 @@ void select_RM();
 
 //Select EDF Algorithm
 void select_EDF();
+
+void drawMartian();
+
+void energyDisplay();
 
 //Simulation loop
 void *simulation_loop();

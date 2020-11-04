@@ -6,6 +6,10 @@ const gchar* valuePeriodo;
 GtkWidget* arrayButtons[LAB_HEIGHT][LAB_WIDTH];
 GtkWidget* arrayImagenes[LAB_HEIGHT][LAB_WIDTH];
 
+GtkWidget* arrayEnergyButton[MAX_MARTIANS];
+GtkWidget* arrayEnergyImage[MAX_MARTIANS];
+GtkWidget* arrayEnergyLabel[MAX_MARTIANS];
+
 char* arraySprites[6] =    {"/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/red.png",
                             "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/green.png",
                             "/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/GUI/img/blue.png",
@@ -39,6 +43,7 @@ int inicializeGUI()
     buttonEDF = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEDF"));
 
     matrixGrid = GTK_WIDGET(gtk_builder_get_object(builder, "matrixGrid"));
+    energyGrid = GTK_WIDGET(gtk_builder_get_object(builder, "energyGrid"));
 
     builder = GTK_BUILDER(gtk_builder_get_object(builder, "builder"));
 
@@ -160,6 +165,21 @@ void drawMartian(){
     }
 }
 
+void energyDisplay(){
+    martian_t* martianList = getMartianList();
+    int numMartians = getNumMartians();
+
+    for (int i=0; i<numMartians;i++){
+        arrayEnergyButton[i] = gtk_button_new();
+        arrayEnergyImage[i] = gtk_image_new_from_file (arraySprites[i]);
+        gtk_button_set_image((GtkButton*)arrayEnergyButton[i],(GtkWidget*)arrayEnergyImage[i]);
+        gtk_grid_attach((GtkGrid*) energyGrid, arrayEnergyButton[i], 0, i, 1,1);
+
+        char* remEnergy = martianList[i].remaining_energy;
+        arrayEnergyLabel[i] = gtk_label_new(remEnergy);
+        gtk_grid_attach((GtkGrid*) energyGrid, arrayEnergyLabel[i], 1, i, 1,1);
+    }
+}
 
 void *simulation_loop()
 {
@@ -168,6 +188,7 @@ void *simulation_loop()
     {
         simulationStep();
         drawMartian();
+        energyDisplay();
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
