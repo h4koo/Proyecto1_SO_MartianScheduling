@@ -188,7 +188,7 @@ void *simulation_loop()
     {
         simulationStep();
         drawMartian();
-        energyDisplay();
+        // energyDisplay();
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
