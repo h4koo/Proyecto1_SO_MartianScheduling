@@ -22,7 +22,7 @@ class VisualGUI:
         total = 0
         elements = 0
 
-        scheduleFile = open("schedule.txt","r")
+        scheduleFile = open("/home/beer/Desktop/REPOS/Proyecto1_SO_MartianScheduling/src/report.txt","r")
         lines = scheduleFile.readlines()
 
         for line in lines:
