@@ -31,6 +31,8 @@ GtkWidget *matrixGrid;
 GtkWidget *energyGrid;
 GtkBuilder *builder;
 
+gboolean key_pressed(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
+
 //Initialize GUI components
 int inicializeGUI();
 

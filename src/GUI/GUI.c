@@ -48,9 +48,21 @@ int inicializeGUI()
 
     builder = GTK_BUILDER(gtk_builder_get_object(builder, "builder"));
 
+    g_signal_connect(G_OBJECT(mainGrid), "key_press_event", G_CALLBACK(key_pressed), NULL);
+
     insertButtons();
 
     return 0;
+}
+
+gboolean key_pressed(GtkWidget *widget, GdkEventKey *event, gpointer data)
+{
+    if (event->keyval == GDK_KEY_x)
+    {
+        on_click_stop_simulation();
+        return TRUE;
+    }
+    return FALSE;
 }
 
 void insertButtons()
