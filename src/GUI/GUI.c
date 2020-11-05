@@ -155,6 +155,8 @@ void add_martian()
     if (sel_mode == AUTO && state == SIM_RUNNING)
         return;
 
+    if (valueEnergia == NULL || valuePeriodo == NULL)
+        return;
     int energy = atoi(valueEnergia);
     int period = atoi(valuePeriodo);
 

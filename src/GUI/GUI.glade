@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkEntryBuffer" id="entrybuffer1"/>
@@ -10,9 +10,6 @@
     <property name="resizable">False</property>
     <property name="default_width">950</property>
     <property name="default_height">600</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkFixed" id="mainGrid">
         <property name="width_request">950</property>
@@ -26,7 +23,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="input_purpose">number</property>
-            <signal name="insert-text" handler="getEnergia" swapped="no"/>
+            <signal name="changed" handler="getEnergia" swapped="no"/>
           </object>
           <packing>
             <property name="x">150</property>
@@ -40,7 +37,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="input_purpose">number</property>
-            <signal name="insert-text" handler="getPeriodo" swapped="no"/>
+            <signal name="changed" handler="getPeriodo" swapped="no"/>
           </object>
           <packing>
             <property name="x">150</property>
@@ -391,6 +388,9 @@
           </packing>
         </child>
       </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
 </interface>
