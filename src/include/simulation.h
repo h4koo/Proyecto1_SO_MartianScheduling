@@ -89,5 +89,6 @@ int getSimulationState();
 void setSimulationState(enum sim_state state);
 
 int getTimeStep();
+void resetSimulation();
 
 #endif

@@ -295,20 +295,6 @@ int moveMartian(int martian_index, martian_t *martian_list)
     ++right.x;
     --left.x;
 
-    // // check where the martian is relative to the end position
-    // int x_diff = end_position.x - martian->position.x;
-    // int y_diff = end_position.y - martian->position.y;
-
-    // if (y_diff < 0) // the end position is going up
-    // {
-    // }
-    // else if (y_diff == 0) // we are in the same row as the end position
-    // {
-    //     /* code */
-    // }
-    // else //the end position is going down
-    // {
-    // }
     // try moving right
     if (right.x >= 0 && right.x < LAB_WIDTH && _labyrinth[right.y][right.x] == LAB_EMPTY && !(right.y == martian->previous_position.y && right.x == martian->previous_position.x))
     {
@@ -318,8 +304,6 @@ int moveMartian(int martian_index, martian_t *martian_list)
         martian->position = right;
         _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
-
-    //try moving
 
     //try moving up
     else if (up.y >= 0 && up.y < LAB_HEIGHT && _labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
@@ -439,41 +423,6 @@ void simulationStep()
     _rm_last_moved_martian = rm_martian_id;
     _edf_last_moved_martian = edf_martian_id;
 
-    // if (_selected_alg == RATE_MONOTONIC)
-    // {
-    //     selected_martian_id = rm_martian_id;
-    // }
-    // else
-    // {
-    //     selected_martian_id = edf_martian_id;
-    // }
-
-    // if (selected_martian_id == SCHEDULING_ERROR)
-    // {
-    //     _simulation_state = SIM_ERROR;
-    // }
-    // else if (selected_martian_id != NO_SCHEDULING)
-    // {
-    //     moveMartian(selected_martian_id);
-    //     mrt = _rm_martians + selected_martian_id;
-    //     printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
-    //     if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
-    //     {
-    //         mrt->state = MRTN_COMPLETED;
-    //         if (++_completed_martians == _num_martians)
-    //         {
-    //             _simulation_state = SIM_FINISHED;
-    //         }
-    //     }
-    //     // log the moving martian
-    //     // logMartian(mrt);
-    // }
-    // else
-    // {
-    //     // logNOP();
-    //     printf("No scheduling\n");
-    // }
-
     // make loggin for both algorithms
     if (rm_martian_id == NO_SCHEDULING)
         logRMNOP();
@@ -580,4 +529,8 @@ void resetSimulation()
         mrt->previous_position.x = -1;
         mrt->previous_position.y = -1;
     }
+
+    _sim_timer = 0;
+    _rm_simulation_state = SIM_INITIAL;
+    _edf_simulation_state = SIM_INITIAL;
 }
