@@ -114,6 +114,9 @@ void on_click_pause_simulation()
 void on_click_stop_simulation()
 {
     endSimulation();
+    resetMartian();
+    resetEnergyGrid();
+    resetEnergyGrid();
 }
 
 void on_click_increase_speed()
@@ -208,6 +211,27 @@ void drawMartian()
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[m->id]);
     gtk_widget_show_all(mainWindow);
     // }
+}
+
+void resetMartian()
+{
+    martian_t *martianList = getMartianList();
+    int numMartians = getNumMartians();
+
+    for (int i = 0; i < numMartians; ++i)
+    {
+        gtk_image_set_from_file((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], "GUI/img/white.png");
+    }
+    return;
+}
+
+void resetEnergyGrid()
+{
+    for (int i = 1; i < MAX_MARTIANS; ++i)
+    {
+        gtk_grid_remove_row((GtkGrid *)energyGrid, i);
+    }
+    return;
 }
 
 void *simulation_loop()

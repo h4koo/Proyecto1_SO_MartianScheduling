@@ -66,6 +66,10 @@ void drawMartian();
 
 void energyDisplay();
 
+void resetMartian();
+
+void resetEnergyGrid();
+
 //Simulation loop
 void *simulation_loop();
 
