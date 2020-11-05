@@ -119,6 +119,7 @@ void on_click_stop_simulation()
     resetMartian();
     resetEnergyGrid();
     resetEnergyGrid();
+    launchReport();
 }
 
 void on_click_increase_speed()
@@ -247,6 +248,7 @@ void resetEnergyGrid()
 
 void launchReport()
 {
+    system("python3 ../visual/main.py");
     return;
 }
 
