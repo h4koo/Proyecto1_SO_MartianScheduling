@@ -11,12 +11,15 @@ int _labyrinth[LAB_HEIGHT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                          {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
                                          {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1},
                                          {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1},
-                                         {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
+                                         {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
                                          {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1},
-                                         {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
+                                         {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
                                          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
 static char *_names[MAX_MARTIANS] = {"A", "B", "C", "D", "E", "F"};
+
+int _rm_last_moved_martian;
+int _edf_last_moved_martian;
 
 static enum sim_state _rm_simulation_state = SIM_INITIAL;
 static enum sim_state _edf_simulation_state = SIM_INITIAL;
@@ -57,6 +60,7 @@ int addMartian(martian_t new_martian)
     new_martian.state = MRTN_RUNNING;
     new_martian.name = _names[_num_martians];
     new_martian.remaining_energy = 0;
+    new_martian.id = _num_martians;
     new_martian.previous_position.x = -1;
     new_martian.previous_position.y = -1;
     new_martian.position.x = _start_position.x;
@@ -79,6 +83,24 @@ martian_t getMartian(int id)
     else
     {
         return _edf_martians[id];
+    }
+}
+
+martian_t *getRunningMartian()
+{
+    if (_selected_alg == RATE_MONOTONIC)
+    {
+
+        if (_rm_last_moved_martian < 0)
+            return NULL;
+        return &_rm_martians[_rm_last_moved_martian];
+    }
+    else
+    {
+
+        if (_edf_last_moved_martian < 0)
+            return NULL;
+        return &_edf_martians[_edf_last_moved_martian];
     }
 }
 
@@ -268,7 +290,7 @@ int moveMartian(int martian_index, martian_t *martian_list)
     ++right.x;
     --left.x;
 
-    //try moving right
+    // try moving right
     if (right.x >= 0 && right.x < LAB_WIDTH && _labyrinth[right.y][right.x] == LAB_EMPTY && !(right.y == martian->previous_position.y && right.x == martian->previous_position.x))
     {
         // move up
@@ -278,8 +300,8 @@ int moveMartian(int martian_index, martian_t *martian_list)
         _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
 
-    else //try moving up
-        if (up.y >= 0 && up.y < LAB_HEIGHT && _labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
+    //try moving up
+    else if (up.y >= 0 && up.y < LAB_HEIGHT && _labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
@@ -392,6 +414,9 @@ void simulationStep()
 
     int rm_martian_id = rateMonotonicScheduling();
     int edf_martian_id = earliestDeadlineFirst();
+
+    _rm_last_moved_martian = rm_martian_id;
+    _edf_last_moved_martian = edf_martian_id;
 
     // make loggin for both algorithms
     if (rm_martian_id == NO_SCHEDULING)

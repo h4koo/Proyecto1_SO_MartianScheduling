@@ -1,21 +1,22 @@
 #include "../include/GUI.h"
 
-const gchar* valueEnergia;
-const gchar* valuePeriodo;
+const gchar *valueEnergia;
+const gchar *valuePeriodo;
 
-GtkWidget* arrayButtons[LAB_HEIGHT][LAB_WIDTH];
-GtkWidget* arrayImagenes[LAB_HEIGHT][LAB_WIDTH];
+GtkWidget *arrayButtons[LAB_HEIGHT][LAB_WIDTH];
+GtkWidget *arrayImagenes[LAB_HEIGHT][LAB_WIDTH];
 
-GtkWidget* arrayEnergyButton[MAX_MARTIANS];
-GtkWidget* arrayEnergyImage[MAX_MARTIANS];
-GtkWidget* arrayEnergyLabel[MAX_MARTIANS];
+GtkWidget *arrayMartianButton[MAX_MARTIANS];
+GtkWidget *arrayMartianImage[MAX_MARTIANS];
+GtkWidget *arrayNameButton[MAX_MARTIANS];
+GtkWidget *arrayEnergyButton[MAX_MARTIANS];
 
-char* arraySprites[6] =    {"GUI/img/red.png",
-                            "GUI/img/green.png",
-                            "GUI/img/blue.png",
-                            "GUI/img/yellow.png",
-                            "GUI/img/magenta.png",
-                            "GUI/img/cyan.png"};
+const char *arraySprites[6] = {"GUI/img/red.png",
+                               "GUI/img/green.png",
+                               "GUI/img/blue.png",
+                               "GUI/img/yellow.png",
+                               "GUI/img/magenta.png",
+                               "GUI/img/cyan.png"};
 
 static pthread_t _running_sim_thread;
 
@@ -54,23 +55,24 @@ int inicializeGUI()
 
 void insertButtons()
 {
-    for (int row = 0 ; row < LAB_HEIGHT ; ++row)
+    for (int row = 0; row < LAB_HEIGHT; ++row)
     {
-        for(int column = 0 ; column < LAB_WIDTH ; ++column)
+        for (int column = 0; column < LAB_WIDTH; ++column)
         {
             arrayButtons[row][column] = gtk_button_new();
 
             if (_labyrinth[row][column] == 0)
             {
-                arrayImagenes[row][column] = gtk_image_new_from_file ("GUI/img/white.png");
-            }else{
-                arrayImagenes[row][column] = gtk_image_new_from_file ("GUI/img/black.png");
+                arrayImagenes[row][column] = gtk_image_new_from_file("GUI/img/white.png");
+            }
+            else
+            {
+                arrayImagenes[row][column] = gtk_image_new_from_file("GUI/img/black.png");
             }
 
-            gtk_button_set_image((GtkButton*)arrayButtons[row][column],(GtkWidget*)arrayImagenes[row][column]);
+            gtk_button_set_image((GtkButton *)arrayButtons[row][column], (GtkWidget *)arrayImagenes[row][column]);
 
-
-            gtk_grid_attach((GtkGrid*) matrixGrid, arrayButtons[row][column], column, row, 1,1);
+            gtk_grid_attach((GtkGrid *)matrixGrid, arrayButtons[row][column], column, row, 1, 1);
         }
     }
 }
@@ -141,6 +143,28 @@ void add_martian()
     martian.max_energy = energy;
     martian.period = period;
     addMartian(martian);
+
+    martian_t *martianList = getMartianList();
+    int numMartians = getNumMartians();
+
+    //Agrega Display del Sprite del Marciano
+    arrayMartianButton[numMartians - 1] = gtk_button_new();
+    arrayMartianImage[numMartians - 1] = gtk_image_new_from_file(arraySprites[numMartians - 1]);
+    gtk_button_set_image((GtkButton *)arrayMartianButton[numMartians - 1], (GtkWidget *)arrayMartianImage[numMartians - 1]);
+    gtk_grid_attach((GtkGrid *)energyGrid, arrayMartianButton[numMartians - 1], 0, numMartians, 1, 1);
+
+    //Agrega Display del Nombre del Marciano
+    arrayNameButton[numMartians - 1] = gtk_button_new();
+    gtk_grid_attach((GtkGrid *)energyGrid, arrayNameButton[numMartians - 1], 1, numMartians, 1, 1);
+    gtk_button_set_label((GtkButton *)arrayNameButton[numMartians - 1], martianList[numMartians - 1].name);
+
+    //Agrega Display del Valor de Energia del Marciano
+    arrayEnergyButton[numMartians - 1] = gtk_button_new();
+    gtk_grid_attach((GtkGrid *)energyGrid, arrayEnergyButton[numMartians - 1], 2, numMartians, 1, 1);
+    gtk_button_set_label((GtkButton *)arrayEnergyButton[numMartians - 1], valueEnergia);
+
+    //Muestra los nuevos Display (botones)
+    gtk_widget_show_all(mainWindow);
 }
 
 void getEnergia(GtkEntry *entryEnergia)
@@ -153,32 +177,25 @@ void getPeriodo(GtkEntry *entryPeriodo)
     valuePeriodo = gtk_entry_get_text(GTK_ENTRY(entryPeriodo));
 }
 
-void drawMartian(){
-    martian_t* arrayMartians = getMartianList();
-    int numMartians = getNumMartians();
-
-    for (int i = 0; i < numMartians; i++)
+void drawMartian()
+{
+    martian_t *m = getRunningMartian();
+    if (m == NULL)
     {
-        martian_t m = arrayMartians[i];
-        gtk_image_set_from_file(arrayImagenes[m.previous_position.y][m.previous_position.x],"GUI/img/white.png");
-        gtk_image_set_from_file(arrayImagenes[m.position.y][m.position.x],arraySprites[i]);
+        return;
     }
-}
 
-void energyDisplay(){
-    martian_t* martianList = getMartianList();
-    int numMartians = getNumMartians();
+    // martian_t *arrayMartians = getMartianList();
+    // int numMartians = getNumMartians();
 
-    for (int i=0; i<numMartians;i++){
-        arrayEnergyButton[i] = gtk_button_new();
-        arrayEnergyImage[i] = gtk_image_new_from_file (arraySprites[i]);
-        gtk_button_set_image((GtkButton*)arrayEnergyButton[i],(GtkWidget*)arrayEnergyImage[i]);
-        gtk_grid_attach((GtkGrid*) energyGrid, arrayEnergyButton[i], 0, i, 1,1);
+    // for (int i = 0; i < numMartians; i++)
+    // {
+    //     martian_t *m = arrayMartians + i;
 
-        char* remEnergy = martianList[i].remaining_energy;
-        arrayEnergyLabel[i] = gtk_label_new(remEnergy);
-        gtk_grid_attach((GtkGrid*) energyGrid, arrayEnergyLabel[i], 1, i, 1,1);
-    }
+    gtk_image_set_from_file((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], "GUI/img/white.png");
+    gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[m->id]);
+    gtk_widget_show_all(mainWindow);
+    // }
 }
 
 void *simulation_loop()
@@ -188,7 +205,6 @@ void *simulation_loop()
     {
         simulationStep();
         drawMartian();
-        // energyDisplay();
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
