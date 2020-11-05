@@ -75,7 +75,7 @@ void insertButtons()
         {
             arrayButtons[row][column] = gtk_button_new();
 
-            if (_labyrinth[row][column] == 0)
+            if (_rm_labyrinth[row][column] == 0)
             {
                 arrayImagenes[row][column] = gtk_image_new_from_file("GUI/img/white.png");
             }
@@ -97,7 +97,21 @@ void on_click_start_simulation()
     if (state == SIM_RUNNING)
         return;
 
-    if (getSimulationState() == SIM_INITIAL)
+    int num_martians = getNumMartians();
+    if (num_martians == 0)
+    {
+        printf("No Martians have been added, no need to start the simulation");
+        return;
+    }
+
+    if (state == SIM_FINISHED || state == SIM_ERROR)
+    { //  if the state is finished or error
+        resetSimulation();
+        setSimulationState(SIM_RUNNING);
+        // reset Button label, timer, remainign energies and clean up board of martians
+    }
+
+    if (state == SIM_INITIAL)
     {
         initReport();
     }
@@ -154,13 +168,25 @@ void select_EDF()
 
 void add_martian()
 {
+    enum app_mode sel_mode = getSelectedMode();
+    enum sim_state state = getSimulationState();
+    if (sel_mode == AUTO && state == SIM_RUNNING)
+        return;
+
+    if (valueEnergia == NULL || valuePeriodo == NULL)
+        return;
     int energy = atoi(valueEnergia);
     int period = atoi(valuePeriodo);
 
     martian_t martian;
     martian.max_energy = energy;
     martian.period = period;
-    addMartian(martian);
+    int res_add = addMartian(martian);
+
+    if (res_add < 0)
+    {
+        return;
+    }
 
     martian_t *martianList = getMartianList();
     int numMartians = getNumMartians();
@@ -272,10 +298,12 @@ void *simulation_loop()
         setTimer();
         doneMartian();
         drawMartian();
+
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
             endReport();
+            // resetSimulation();
             break;
         }
 
