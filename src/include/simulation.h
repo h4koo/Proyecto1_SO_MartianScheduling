@@ -39,7 +39,7 @@ void startSimulation();
 
 martian_t getMartian(int id);
 
-martian_t* getMartianList();
+martian_t *getMartianList();
 
 int getNumMartians();
 
@@ -85,5 +85,6 @@ int getSimulationState();
 void setSimulationState(enum sim_state state);
 
 int getTimeStep();
+void resetSimulation();
 
 #endif
