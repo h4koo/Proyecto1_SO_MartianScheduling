@@ -34,8 +34,6 @@ GtkBuilder *builder;
 //Initialize GUI components
 int inicializeGUI();
 
-void initializeEnergyDisplay();
-
 void insertButtons();
 
 //Start Simulation

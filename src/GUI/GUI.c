@@ -49,7 +49,6 @@ int inicializeGUI()
     builder = GTK_BUILDER(gtk_builder_get_object(builder, "builder"));
 
     insertButtons();
-    // initializeEnergyDisplay();
 
     return 0;
 }
@@ -180,15 +179,23 @@ void getPeriodo(GtkEntry *entryPeriodo)
 
 void drawMartian()
 {
-    martian_t *arrayMartians = getMartianList();
-    int numMartians = getNumMartians();
-
-    for (int i = 0; i < numMartians; i++)
+    martian_t *m = getRunningMartian();
+    if (m == NULL)
     {
-        martian_t *m = arrayMartians + i;
-        gtk_image_set_from_file((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], "GUI/img/white.png");
-        gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[i]);
+        return;
     }
+
+    // martian_t *arrayMartians = getMartianList();
+    // int numMartians = getNumMartians();
+
+    // for (int i = 0; i < numMartians; i++)
+    // {
+    //     martian_t *m = arrayMartians + i;
+
+    gtk_image_set_from_file((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], "GUI/img/white.png");
+    gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[m->id]);
+    gtk_widget_show_all(mainWindow);
+    // }
 }
 
 void *simulation_loop()
