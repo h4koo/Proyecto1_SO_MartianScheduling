@@ -42,15 +42,29 @@ int inicializeGUI()
     treeEnergiaMarciano = GTK_WIDGET(gtk_builder_get_object(builder, "treeEnergiaMarciano"));
     buttonRM = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRM"));
     buttonEDF = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEDF"));
+    timerLabel = GTK_WIDGET(gtk_builder_get_object(builder, "timerLabel"));
+    messageLabel = GTK_WIDGET(gtk_builder_get_object(builder, "messageLabel"));
 
     matrixGrid = GTK_WIDGET(gtk_builder_get_object(builder, "matrixGrid"));
     energyGrid = GTK_WIDGET(gtk_builder_get_object(builder, "energyGrid"));
 
     builder = GTK_BUILDER(gtk_builder_get_object(builder, "builder"));
 
+    g_signal_connect(G_OBJECT(mainGrid), "key_press_event", G_CALLBACK(key_pressed), NULL);
+
     insertButtons();
 
     return 0;
+}
+
+gboolean key_pressed(GtkWidget *widget, GdkEventKey *event, gpointer data)
+{
+    if (event->keyval == GDK_KEY_x)
+    {
+        on_click_stop_simulation();
+        return TRUE;
+    }
+    return FALSE;
 }
 
 void insertButtons()
@@ -116,6 +130,10 @@ void on_click_pause_simulation()
 void on_click_stop_simulation()
 {
     endSimulation();
+    resetMartian();
+    resetEnergyGrid();
+    resetEnergyGrid();
+    launchReport();
 }
 
 void on_click_increase_speed()
@@ -206,22 +224,69 @@ void getPeriodo(GtkEntry *entryPeriodo)
 void drawMartian()
 {
     martian_t *m = getRunningMartian();
+
     if (m == NULL)
     {
         return;
     }
 
-    // martian_t *arrayMartians = getMartianList();
-    // int numMartians = getNumMartians();
-
-    // for (int i = 0; i < numMartians; i++)
-    // {
-    //     martian_t *m = arrayMartians + i;
-
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], "GUI/img/white.png");
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[m->id]);
     gtk_widget_show_all(mainWindow);
-    // }
+}
+
+void doneMartian()
+{
+    martian_t *martianList = getMartianList();
+    int numMartians = getNumMartians();
+
+    for (int i = 0; i < numMartians; ++i)
+    {
+        if (martianList[i].state == MRTN_COMPLETED)
+        {
+            gtk_image_set_from_file((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], "GUI/img/white.png");
+            gtk_button_set_label((GtkButton *)arrayEnergyButton, "DONE");
+        }
+    }
+    return;
+}
+
+void resetMartian()
+{
+    martian_t *martianList = getMartianList();
+    int numMartians = getNumMartians();
+
+    for (int i = 0; i < numMartians; ++i)
+    {
+        gtk_image_set_from_file((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], "GUI/img/white.png");
+    }
+    return;
+}
+
+void resetEnergyGrid()
+{
+    for (int i = 1; i < MAX_MARTIANS; ++i)
+    {
+        gtk_grid_remove_row((GtkGrid *)energyGrid, i);
+    }
+    return;
+}
+
+void launchReport()
+{
+    system("python3 ../visual/main.py");
+    return;
+}
+
+void setTimer()
+{
+    int timer = getSimulationTime();
+    char stimer[10];
+    sprintf(stimer, "%d", timer);
+
+    gtk_label_set_text((GtkLabel *)timerLabel, stimer);
+
+    return;
 }
 
 void *simulation_loop()
@@ -230,6 +295,8 @@ void *simulation_loop()
     while (getSimulationState() == SIM_RUNNING)
     {
         simulationStep();
+        setTimer();
+        doneMartian();
         drawMartian();
 
         state = getSimulationState();

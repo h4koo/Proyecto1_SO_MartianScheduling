@@ -1,0 +1,29 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C/C++: gcc-9 build active file",
+            "command": "/usr/bin/gcc-9",
+            "args": [
+                "-g",
+                "-o",
+                "main",
+                "main.c", "lib/simulation.c", "GUI/GUI.c",
+                "-lm",
+                "`pkg-config --cflags --libs gtk+3.0`",
+                "-export-dynamic"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}

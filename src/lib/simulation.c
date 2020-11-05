@@ -137,6 +137,11 @@ int getNumMartians()
     return _num_martians;
 }
 
+int getSimulationTime()
+{
+    return _sim_timer;
+}
+
 // starts the simulation loop
 void startSimulation()
 {

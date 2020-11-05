@@ -29,7 +29,11 @@ GtkWidget *buttonRM;
 GtkWidget *buttonEDF;
 GtkWidget *matrixGrid;
 GtkWidget *energyGrid;
+GtkWidget *timerLabel;
+GtkWidget *messageLabel;
 GtkBuilder *builder;
+
+gboolean key_pressed(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 
 //Initialize GUI components
 int inicializeGUI();
@@ -63,6 +67,16 @@ void select_EDF();
 void drawMartian();
 
 void energyDisplay();
+
+void resetMartian();
+
+void resetEnergyGrid();
+
+void launchReport();
+
+void doneMartian();
+
+void setTimer();
 
 //Simulation loop
 void *simulation_loop();
