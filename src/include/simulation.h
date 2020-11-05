@@ -29,7 +29,19 @@ enum sim_state
     SIM_ERROR
 };
 
-extern int _labyrinth[LAB_HEIGHT][LAB_WIDTH];
+enum app_mode
+{
+    AUTO,
+    MANUAL
+};
+
+enum schd_alg
+{
+    RATE_MONOTONIC,
+    EARLIEST_DEADLINE_FIRST
+};
+
+extern int _rm_labyrinth[LAB_HEIGHT][LAB_WIDTH];
 
 // ++++ External funcs ++++
 int addMartian(martian_t new_martian);
@@ -67,7 +79,7 @@ int rateMonotonicScheduling();
 int earliestDeadlineFirst();
 
 // makes a semi-random movement of a mratian in the labyrinth
-int moveMartian(int martian_index, martian_t *martian_list);
+int moveMartian(int martian_index, martian_t *martian_list, int labyrinth[LAB_HEIGHT][LAB_WIDTH]);
 
 // loop that simulates CPU clock. In charge of managing martians energy and moving them and checking
 void *simulationLoop();
@@ -89,4 +101,7 @@ void setSimulationState(enum sim_state state);
 int getTimeStep();
 void resetSimulation();
 
+enum app_mode getSelectedMode();
+
+char *getSimErrorMessage();
 #endif

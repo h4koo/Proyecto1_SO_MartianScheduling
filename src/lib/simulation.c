@@ -4,35 +4,45 @@
 #define MIN_TIME_STEP 100000
 #define NO_SCHEDULING -1
 #define SCHEDULING_ERROR -2
+#define EW_MESSAGE_LENGTH 256
 
-int _labyrinth[LAB_HEIGHT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                                         {1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-                                         {1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
-                                         {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
-                                         {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1},
-                                         {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1},
-                                         {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-                                         {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1},
-                                         {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
-                                         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+int _rm_labyrinth[LAB_HEIGHT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                                            {1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+                                            {1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+                                            {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
+                                            {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1},
+                                            {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1},
+                                            {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+                                            {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1},
+                                            {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+                                            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+
+int _edf_labyrinth[LAB_HEIGHT][LAB_WIDTH] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                                             {1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+                                             {1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+                                             {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
+                                             {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1},
+                                             {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1},
+                                             {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+                                             {1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1},
+                                             {1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+                                             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+;
 
 static char *_names[MAX_MARTIANS] = {"A", "B", "C", "D", "E", "F"};
 
 int _rm_last_moved_martian;
 int _edf_last_moved_martian;
 
+char _rm_message[EW_MESSAGE_LENGTH];
+char _edf_message[EW_MESSAGE_LENGTH];
+
 static enum sim_state _rm_simulation_state = SIM_INITIAL;
 static enum sim_state _edf_simulation_state = SIM_INITIAL;
 
-static enum schd_alg {
-    RATE_MONOTONIC,
-    EARLIEST_DEADLINE_FIRST
-} _selected_alg = RATE_MONOTONIC;
+static enum schd_alg _selected_alg = RATE_MONOTONIC;
 
-static enum app_mode {
-    AUTO,
-    MANUAL
-} _sim_mode;
+static enum app_mode _sim_mode;
 
 static martian_t _rm_martians[MAX_MARTIANS];
 static martian_t _edf_martians[MAX_MARTIANS];
@@ -57,6 +67,12 @@ int addMartian(martian_t new_martian)
         printf("*****\nERROR: No se pueden agregar mas de %i marcianos a la simulación\n", MAX_MARTIANS);
         return -1;
     }
+    if (new_martian.period < new_martian.max_energy || new_martian.max_energy <= 0)
+    {
+        printf("*****\nERROR: Al agregar marciano, valores incorrectos de entrada --> Periodo: %d  MxEnergia: %d\n", new_martian.period, new_martian.max_energy);
+        return -1;
+    }
+
     new_martian.state = MRTN_RUNNING;
     new_martian.name = _names[_num_martians];
     new_martian.remaining_energy = 0;
@@ -202,6 +218,7 @@ int rateMonotonicScheduling()
             {
                 printf("ERROR SCHEDULING RM: Martian %s was unable to complete past work before starting new one\n", mrt->name);
                 _rm_simulation_state = SIM_ERROR;
+                sprintf(_rm_message, "ERROR SCHEDULING RM: \nMartian %s was unable to complete past work before starting new one\n", mrt->name);
                 return SCHEDULING_ERROR;
             }
             else
@@ -253,6 +270,7 @@ int earliestDeadlineFirst()
             {
                 printf("ERROR SCHEDULING RM: Martian %s was unable to complete past work before starting new one\n", mrt->name);
                 _edf_simulation_state = SIM_ERROR;
+                sprintf(_edf_message, "ERROR SCHEDULING EDF: \nMartian %s was unable to complete past work before starting new one\n", mrt->name);
                 return SCHEDULING_ERROR;
             }
             else
@@ -280,7 +298,7 @@ int earliestDeadlineFirst()
 }
 
 // makes a semi-random movement of a martian in the labyrinth
-int moveMartian(int martian_index, martian_t *martian_list)
+int moveMartian(int martian_index, martian_t *martian_list, int labyrinth[LAB_HEIGHT][LAB_WIDTH])
 {
 
     martian_t *martian = martian_list + martian_index;
@@ -290,54 +308,60 @@ int moveMartian(int martian_index, martian_t *martian_list)
     ++right.x;
     --left.x;
 
+    printf("up x:%d, y:%d\n", up.x, up.y);
+    printf("left x:%d, y:%d   ", left.x, left.y);
+    printf(" -- x:%d, y:%d  --  ", martian->position.x, martian->position.y);
+    printf("   right x:%d, y:%d\n", right.x, right.y);
+    printf("down x:%d, y:%d\n", down.x, down.y);
+
     // try moving right
-    if (right.x >= 0 && right.x < LAB_WIDTH && _labyrinth[right.y][right.x] == LAB_EMPTY && !(right.y == martian->previous_position.y && right.x == martian->previous_position.x))
+    if (right.x >= 0 && right.x < LAB_WIDTH && labyrinth[right.y][right.x] == LAB_EMPTY && !(right.y == martian->previous_position.y && right.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
+        labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
         martian->position = right;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
+        labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
 
     //try moving up
-    else if (up.y >= 0 && up.y < LAB_HEIGHT && _labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
+    else if (up.y >= 0 && up.y < LAB_HEIGHT && labyrinth[up.y][up.x] == 0 && !(up.y == martian->previous_position.y && up.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
+        labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
         martian->position = up;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
+        labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
 
     // try moving down
-    else if (down.y >= 0 && down.y < LAB_HEIGHT && _labyrinth[down.y][down.x] == 0 && !(down.y == martian->previous_position.y && down.x == martian->previous_position.x))
+    else if (down.y >= 0 && down.y < LAB_HEIGHT && labyrinth[down.y][down.x] == 0 && !(down.y == martian->previous_position.y && down.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
+        labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
         martian->position = down;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
+        labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
 
     //try moving left
-    else if (left.x >= 0 && left.x < LAB_WIDTH && _labyrinth[left.y][left.x] == LAB_EMPTY && !(left.y == martian->previous_position.y && left.x == martian->previous_position.x))
+    else if (left.x >= 0 && left.x < LAB_WIDTH && labyrinth[left.y][left.x] == LAB_EMPTY && !(left.y == martian->previous_position.y && left.x == martian->previous_position.x))
     {
         // move up
         martian->previous_position = martian->position;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
+        labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
         martian->position = left;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
+        labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
 
     // the martian couldn't move anywhere to a new position, try moving to previous position
-    else if (_labyrinth[martian->previous_position.y][martian->previous_position.x] == LAB_EMPTY)
+    else if (labyrinth[martian->previous_position.y][martian->previous_position.x] == LAB_EMPTY)
     {
         left = martian->position;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
+        labyrinth[martian->position.y][martian->position.x] = LAB_EMPTY;
         martian->position = martian->previous_position;
         martian->previous_position = left;
-        _labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
+        labyrinth[martian->position.y][martian->position.x] = LAB_MARTIAN;
     }
 
     // the martian couldn't move
@@ -374,7 +398,7 @@ void *simulationLoop()
             break;
         if (selected_martian_id != NO_SCHEDULING)
         {
-            moveMartian(selected_martian_id, _rm_martians);
+            moveMartian(selected_martian_id, _rm_martians, _rm_labyrinth);
             mrt = _rm_martians + selected_martian_id;
             printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
             if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
@@ -419,50 +443,62 @@ void simulationStep()
     _edf_last_moved_martian = edf_martian_id;
 
     // make loggin for both algorithms
-    if (rm_martian_id == NO_SCHEDULING)
-        logRMNOP();
-    else if (rm_martian_id != SCHEDULING_ERROR)
-    {
-        logRMMartian(_rm_martians + rm_martian_id);
 
-        moveMartian(rm_martian_id, _rm_martians);
-        mrt = _rm_martians + rm_martian_id;
-        printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
-        if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
+    if (_rm_simulation_state != SIM_FINISHED)
+    {
+        if (rm_martian_id == NO_SCHEDULING)
+            logRMNOP();
+        else if (rm_martian_id != SCHEDULING_ERROR)
         {
-            mrt->state = MRTN_COMPLETED;
-            if (++_rm_completed_martians == _num_martians)
+            logRMMartian(_rm_martians + rm_martian_id);
+
+            moveMartian(rm_martian_id, _rm_martians, _rm_labyrinth);
+            mrt = _rm_martians + rm_martian_id;
+            printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
+            printf("It's previous position was x: %d, y: %d \n", mrt->previous_position.x, mrt->previous_position.y);
+            if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
             {
-                _rm_simulation_state = SIM_FINISHED;
+                _rm_labyrinth[_end_position.y][_end_position.x] = 0;
+                mrt->state = MRTN_COMPLETED;
+                if (++_rm_completed_martians == _num_martians)
+                {
+                    _rm_simulation_state = SIM_FINISHED;
+                }
             }
         }
-    }
-    else
-    {
-        _rm_simulation_state = SIM_ERROR;
-    }
-
-    if (edf_martian_id == NO_SCHEDULING)
-        logEDFNOP();
-    else if (edf_martian_id != SCHEDULING_ERROR)
-    {
-        logEDFMartian(_edf_martians + edf_martian_id);
-
-        moveMartian(edf_martian_id, _edf_martians);
-        mrt = _edf_martians + edf_martian_id;
-        printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
-        if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
+        else
         {
-            mrt->state = MRTN_COMPLETED;
-            if (++_rm_completed_martians == _num_martians)
-            {
-                _rm_simulation_state = SIM_FINISHED;
-            }
+            _rm_simulation_state = SIM_ERROR;
         }
     }
-    else
+
+    if (_edf_simulation_state != SIM_FINISHED)
     {
-        _edf_simulation_state = SIM_ERROR;
+        /* code */
+
+        if (edf_martian_id == NO_SCHEDULING)
+            logEDFNOP();
+        else if (edf_martian_id != SCHEDULING_ERROR)
+        {
+            logEDFMartian(_edf_martians + edf_martian_id);
+
+            moveMartian(edf_martian_id, _edf_martians, _edf_labyrinth);
+            mrt = _edf_martians + edf_martian_id;
+            // printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
+            if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
+            {
+                _edf_labyrinth[_end_position.y][_end_position.x] = 0;
+                mrt->state = MRTN_COMPLETED;
+                if (++_rm_completed_martians == _num_martians)
+                {
+                    _rm_simulation_state = SIM_FINISHED;
+                }
+            }
+        }
+        else
+        {
+            _edf_simulation_state = SIM_ERROR;
+        }
     }
 
     printf("Simulation time is: %d \n", _sim_timer);
@@ -489,6 +525,11 @@ void selectModeManual()
     _sim_mode = MANUAL;
 }
 
+enum app_mode getSelectedMode()
+{
+    return _sim_mode;
+}
+
 int getSimulationState()
 {
     return _selected_alg == RATE_MONOTONIC ? _rm_simulation_state : _edf_simulation_state;
@@ -510,6 +551,14 @@ int getTimeStep()
     return _time_step;
 }
 
+char *getSimErrorMessage()
+{
+    return _selected_alg == RATE_MONOTONIC ? _rm_message : _edf_message;
+}
+void removeAllMartians()
+{
+    _num_martians = 0;
+}
 void resetSimulation()
 {
 
@@ -523,6 +572,21 @@ void resetSimulation()
         mrt->position.y = _start_position.y;
         mrt->previous_position.x = -1;
         mrt->previous_position.y = -1;
+    }
+
+    for (size_t i = 0; i < LAB_HEIGHT; ++i)
+    {
+        for (size_t j = 0; j < LAB_WIDTH; ++j)
+        {
+            if (_rm_labyrinth[i][j] > 1)
+            {
+                _rm_labyrinth[i][j] = 0;
+            }
+            if (_edf_labyrinth[i][j] > 1)
+            {
+                _edf_labyrinth[i][j] = 0;
+            }
+        }
     }
 
     _sim_timer = 0;
