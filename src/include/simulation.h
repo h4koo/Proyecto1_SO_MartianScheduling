@@ -45,6 +45,8 @@ martian_t *getMartianList();
 
 int getNumMartians();
 
+int getSimulationTime();
+
 // pauses simulation loop
 void pauseSimulation();
 

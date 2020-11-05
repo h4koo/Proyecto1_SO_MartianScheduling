@@ -150,7 +150,6 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <signal name="clicked" handler="on_click_stop_simulation" swapped="no"/>
-            <signal name="key-press-event" handler="on_click_stop_simulation" swapped="no"/>
           </object>
           <packing>
             <property name="x">550</property>
@@ -406,6 +405,22 @@
           <packing>
             <property name="x">750</property>
             <property name="y">595</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="timerLabel">
+            <property name="width_request">240</property>
+            <property name="height_request">100</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">
+</property>
+            <property name="justify">center</property>
+            <property name="ellipsize">middle</property>
+          </object>
+          <packing>
+            <property name="x">750</property>
+            <property name="y">445</property>
           </packing>
         </child>
       </object>

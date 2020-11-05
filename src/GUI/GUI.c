@@ -42,6 +42,8 @@ int inicializeGUI()
     treeEnergiaMarciano = GTK_WIDGET(gtk_builder_get_object(builder, "treeEnergiaMarciano"));
     buttonRM = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRM"));
     buttonEDF = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEDF"));
+    timerLabel = GTK_WIDGET(gtk_builder_get_object(builder, "timerLabel"));
+    messageLabel = GTK_WIDGET(gtk_builder_get_object(builder, "messageLabel"));
 
     matrixGrid = GTK_WIDGET(gtk_builder_get_object(builder, "matrixGrid"));
     energyGrid = GTK_WIDGET(gtk_builder_get_object(builder, "energyGrid"));
@@ -195,22 +197,31 @@ void getPeriodo(GtkEntry *entryPeriodo)
 void drawMartian()
 {
     martian_t *m = getRunningMartian();
+
     if (m == NULL)
     {
         return;
     }
 
-    // martian_t *arrayMartians = getMartianList();
-    // int numMartians = getNumMartians();
-
-    // for (int i = 0; i < numMartians; i++)
-    // {
-    //     martian_t *m = arrayMartians + i;
-
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], "GUI/img/white.png");
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[m->id]);
     gtk_widget_show_all(mainWindow);
-    // }
+}
+
+void doneMartian()
+{
+    martian_t *martianList = getMartianList();
+    int numMartians = getNumMartians();
+
+    for (int i = 0; i < numMartians; ++i)
+    {
+        if (martianList[i].state == MRTN_COMPLETED)
+        {
+            gtk_image_set_from_file((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], "GUI/img/white.png");
+            gtk_button_set_label((GtkButton *)arrayEnergyButton, "DONE");
+        }
+    }
+    return;
 }
 
 void resetMartian()
@@ -234,12 +245,30 @@ void resetEnergyGrid()
     return;
 }
 
+void launchReport()
+{
+    return;
+}
+
+void setTimer()
+{
+    int timer = getSimulationTime();
+    char stimer[10];
+    sprintf(stimer, "%d", timer);
+
+    gtk_label_set_text((GtkLabel *)timerLabel, stimer);
+
+    return;
+}
+
 void *simulation_loop()
 {
     enum sim_state state;
     while (getSimulationState() == SIM_RUNNING)
     {
         simulationStep();
+        setTimer();
+        doneMartian();
         drawMartian();
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
