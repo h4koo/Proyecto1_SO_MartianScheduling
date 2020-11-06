@@ -177,6 +177,7 @@ void on_click_stop_simulation()
         endSimulation();
         gtk_button_set_label((GtkButton *)buttonComenzar, "Restart");
         gtk_button_set_label((GtkButton *)buttonDetener, "Reset");
+        endReport();
         launchReport();
     }
 
@@ -194,7 +195,6 @@ void on_click_stop_simulation()
     // // resetMartian();
     // // resetEnergyGrid();
     // // resetEnergyGrid();
-    // // launchReport();
 
     // gtk_button_set_label((GtkButton *)buttonComenzar, "Restart");
 }
