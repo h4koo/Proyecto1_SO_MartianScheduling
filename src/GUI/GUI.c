@@ -177,8 +177,7 @@ void on_click_stop_simulation()
         endSimulation();
         gtk_button_set_label((GtkButton *)buttonComenzar, "Restart");
         gtk_button_set_label((GtkButton *)buttonDetener, "Reset");
-        endReport();
-        launchReport();
+        // launchReport();
     }
 
     else if (state == SIM_ERROR || state == SIM_FINISHED)
@@ -366,6 +365,7 @@ void resetEnergyGrid()
 
 void launchReport()
 {
+    endReport();
     system("python3 ../visual/main.py");
     return;
 }
@@ -403,8 +403,7 @@ void *simulation_loop()
 
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
-            endReport();
-            // controlButtonsSimEnd();
+            launchReport();
 
             break;
         }
