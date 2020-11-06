@@ -101,7 +101,7 @@ int getSimulationState();
 void setSimulationState(enum sim_state state);
 
 int getTimeStep();
-void resetSimulation();
+void restartSimulation();
 void removeAllMartians();
 
 enum app_mode getSelectedMode();

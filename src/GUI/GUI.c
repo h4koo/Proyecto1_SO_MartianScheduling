@@ -140,7 +140,7 @@ void on_click_start_simulation()
     if (state == SIM_FINISHED || state == SIM_ERROR)
     { //  if the state is finished or error
         resetMartian();
-        resetSimulation();
+        restartSimulation();
         initReport();
         // reset Button label, timer, remainign energies and clean up board of martians
     }
@@ -293,8 +293,10 @@ void drawMartian()
     {
         return;
     }
-
-    gtk_image_set_from_pixbuf((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], white_image);
+    if (m->previous_position.y != -1)
+    {
+        gtk_image_set_from_pixbuf((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], white_image);
+    }
 
     if (m->state == MRTN_COMPLETED)
     {
@@ -380,6 +382,7 @@ void controlButtonsSimEnd()
 void *simulation_loop()
 {
     enum sim_state state = getSimulationState();
+
     while (state == SIM_RUNNING)
     {
         simulationStep();
@@ -389,10 +392,12 @@ void *simulation_loop()
         usleep(getTimeStep());
 
         state = getSimulationState();
+
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
             endReport();
-            controlButtonsSimEnd();
+            // controlButtonsSimEnd();
+
             break;
         }
     }

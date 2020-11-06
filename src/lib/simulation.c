@@ -50,7 +50,7 @@ static int _num_martians = 0;
 
 static int _rm_completed_martians = 0;
 static int _edf_completed_martians = 0;
-static pthread_t _running_sim_thread;
+// static pthread_t _running_sim_thread;
 
 static int _sim_timer = 0;
 static unsigned int _time_step = 500000;
@@ -142,21 +142,21 @@ int getSimulationTime()
     return _sim_timer;
 }
 
-// starts the simulation loop
-void startSimulation()
-{
-    if (_rm_simulation_state == SIM_INITIAL)
-    {
-        initReport();
-    }
+// // starts the simulation loop
+// void startSimulation()
+// {
+//     if (_rm_simulation_state == SIM_INITIAL)
+//     {
+//         initReport();
+//     }
 
-    _rm_simulation_state = SIM_RUNNING;
-    _edf_simulation_state = SIM_RUNNING;
+//     _rm_simulation_state = SIM_RUNNING;
+//     _edf_simulation_state = SIM_RUNNING;
 
-    // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
-    pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
-    // simulationLoop();
-}
+//     // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
+//     pthread_create(&_running_sim_thread, NULL, simulationLoop, NULL);
+//     // simulationLoop();
+// }
 
 // pauses simulation loop
 void pauseSimulation()
@@ -204,6 +204,10 @@ int rateMonotonicScheduling()
     int selected_id = NO_SCHEDULING;
     int lowest_period = 999999;
 
+    if (_rm_simulation_state == SIM_ERROR)
+    {
+        return SCHEDULING_ERROR;
+    }
     for (int i = 0; i < _num_martians; ++i)
     {
         mrt = _rm_martians + i;
@@ -257,6 +261,11 @@ int earliestDeadlineFirst()
     int selected_id = NO_SCHEDULING; //if -1 is returned no scheduling is needed
     int earliest_deadline = 999999;
 
+    if (_edf_simulation_state == SIM_ERROR)
+    {
+        return SCHEDULING_ERROR;
+    }
+
     for (int i = 0; i < _num_martians; ++i)
     {
         mrt = _edf_martians + i;
@@ -288,8 +297,12 @@ int earliestDeadlineFirst()
         // if the martian has energy
         if (mrt->remaining_energy > 0)
         {
-            num_cycles = _sim_timer / mrt->period;
-            deadline = (mrt->period * (num_cycles + 1)) - _sim_timer;
+            // num_cycles = _sim_timer / mrt->period;
+            // deadline = (mrt->period * (num_cycles + 1)) - (_sim_timer + mrt->remaining_energy);
+
+            num_cycles = _sim_timer % mrt->period;
+            deadline = (mrt->period - num_cycles) - mrt->remaining_energy;
+
             if (deadline < earliest_deadline)
             {
                 earliest_deadline = deadline;
@@ -297,6 +310,11 @@ int earliestDeadlineFirst()
             }
         }
     } // end for
+
+    // if (selected_id != NO_SCHEDULING)
+    // {
+    //     printf("EDF earlieast deadlines is: %d, the martian selected is: %d\n", earliest_deadline, selected_id);
+    // }
 
     _edf_completed_martians = completed_mrt;
     return selected_id;
@@ -444,12 +462,15 @@ void simulationStep()
     int rm_martian_id = rateMonotonicScheduling();
     int edf_martian_id = earliestDeadlineFirst();
 
+    // printf("RM scheduled martian: %d\n", rm_martian_id);
+    // printf("EDF scheduled martian: %d\n", edf_martian_id);
+
     _rm_last_moved_martian = rm_martian_id;
     _edf_last_moved_martian = edf_martian_id;
 
     // make loggin for both algorithms
 
-    if (_rm_simulation_state != SIM_FINISHED)
+    if (_rm_simulation_state != SIM_FINISHED && _rm_simulation_state != SIM_ERROR)
     {
         if (rm_martian_id == NO_SCHEDULING)
             logRMNOP();
@@ -477,7 +498,7 @@ void simulationStep()
         }
     }
 
-    if (_edf_simulation_state != SIM_FINISHED)
+    if (_edf_simulation_state != SIM_FINISHED && _edf_simulation_state != SIM_ERROR)
     {
         /* code */
 
@@ -507,6 +528,7 @@ void simulationStep()
     }
 
     // printf("Simulation time is: %d \n", _sim_timer);
+    // printf("\n---------------------------------------------------------------------------------------------------------------\n");
     ++_sim_timer;
 }
 
@@ -537,7 +559,19 @@ enum app_mode getSelectedMode()
 
 int getSimulationState()
 {
-    return _selected_alg == RATE_MONOTONIC ? _rm_simulation_state : _edf_simulation_state;
+    if (_selected_alg == RATE_MONOTONIC)
+    {
+        return _rm_simulation_state;
+    }
+    else if (_selected_alg == EARLIEST_DEADLINE_FIRST)
+    {
+        return _edf_simulation_state;
+    }
+    else
+    {
+        printf("something fishy hapening\n");
+        return -1;
+    }
 }
 
 void setSimulationState(enum sim_state state)
@@ -564,7 +598,7 @@ void removeAllMartians()
 {
     _num_martians = 0;
 }
-void resetSimulation()
+void restartSimulation()
 {
 
     martian_t *mrt;
