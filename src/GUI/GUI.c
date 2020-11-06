@@ -9,7 +9,18 @@ GtkWidget *arrayImagenes[LAB_HEIGHT][LAB_WIDTH];
 GtkWidget *arrayMartianButton[MAX_MARTIANS];
 GtkWidget *arrayMartianImage[MAX_MARTIANS];
 GtkWidget *arrayNameButton[MAX_MARTIANS];
-GtkWidget *arrayEnergyButton[MAX_MARTIANS];
+GtkWidget *arrayEnergyLabel[MAX_MARTIANS];
+GError **error;
+
+GdkPixbuf *red_image;
+GdkPixbuf *green_image;
+GdkPixbuf *blue_image;
+GdkPixbuf *yellow_image;
+GdkPixbuf *cyan_image;
+GdkPixbuf *magenta_image;
+
+GdkPixbuf *white_image;
+GdkPixbuf *black_image;
 
 const char *arraySprites[6] = {"GUI/img/red.png",
                                "GUI/img/green.png",
@@ -17,7 +28,7 @@ const char *arraySprites[6] = {"GUI/img/red.png",
                                "GUI/img/yellow.png",
                                "GUI/img/magenta.png",
                                "GUI/img/cyan.png"};
-
+GdkPixbuf *sprite_images[MAX_MARTIANS];
 static pthread_t _running_sim_thread;
 
 int inicializeGUI()
@@ -50,6 +61,26 @@ int inicializeGUI()
 
     builder = GTK_BUILDER(gtk_builder_get_object(builder, "builder"));
 
+    red_image = gdk_pixbuf_new_from_file("GUI/img/red.png", error);
+    green_image = gdk_pixbuf_new_from_file("GUI/img/green.png", error);
+    blue_image = gdk_pixbuf_new_from_file("GUI/img/blue.png", error);
+    yellow_image = gdk_pixbuf_new_from_file("GUI/img/yellow.png", error);
+    cyan_image = gdk_pixbuf_new_from_file("GUI/img/cyan.png", error);
+    magenta_image = gdk_pixbuf_new_from_file("GUI/img/magenta.png", error);
+
+    white_image = gdk_pixbuf_new_from_file("GUI/img/white.png", error);
+    black_image = gdk_pixbuf_new_from_file("GUI/img/black.png", error);
+
+    //set up the Image pixbufs
+    sprite_images[0] = red_image;
+    sprite_images[1] = green_image;
+    sprite_images[2] = blue_image;
+    sprite_images[3] = yellow_image;
+    sprite_images[4] = cyan_image;
+    sprite_images[5] = magenta_image;
+    // sprite_images[0] = red_image;
+    // , white_image, black_image, red_image, white_image, black_image};
+
     g_signal_connect(G_OBJECT(mainGrid), "key_press_event", G_CALLBACK(key_pressed), NULL);
 
     insertButtons();
@@ -77,11 +108,13 @@ void insertButtons()
 
             if (_rm_labyrinth[row][column] == 0)
             {
-                arrayImagenes[row][column] = gtk_image_new_from_file("GUI/img/white.png");
+                // arrayImagenes[row][column] = gtk_image_new_from_file("GUI/img/white.png");
+                arrayImagenes[row][column] = gtk_image_new_from_pixbuf(white_image);
             }
             else
             {
-                arrayImagenes[row][column] = gtk_image_new_from_file("GUI/img/black.png");
+                arrayImagenes[row][column] = gtk_image_new_from_pixbuf(black_image);
+                // arrayImagenes[row][column] = gtk_image_new_from_file("GUI/img/black.png");
             }
 
             gtk_button_set_image((GtkButton *)arrayButtons[row][column], (GtkWidget *)arrayImagenes[row][column]);
@@ -106,8 +139,9 @@ void on_click_start_simulation()
 
     if (state == SIM_FINISHED || state == SIM_ERROR)
     { //  if the state is finished or error
+        resetMartian();
         resetSimulation();
-        setSimulationState(SIM_RUNNING);
+        initReport();
         // reset Button label, timer, remainign energies and clean up board of martians
     }
 
@@ -117,18 +151,26 @@ void on_click_start_simulation()
     }
 
     setSimulationState(SIM_RUNNING);
-
+    gtk_button_set_label((GtkButton *)buttonComenzar, "Running");
+    gtk_button_set_label((GtkButton *)buttonDetener, "Stop");
     // start simulation loop in a thread !!!!!!!!!!!!!!!!!!!!
     pthread_create(&_running_sim_thread, NULL, simulation_loop, NULL);
 }
 
 void on_click_pause_simulation()
 {
-    pauseSimulation();
+    enum sim_state state = getSimulationState();
+
+    if (state == SIM_RUNNING)
+    {
+        pauseSimulation();
+        gtk_button_set_label((GtkButton *)buttonComenzar, "Resume");
+    }
 }
 
 void on_click_stop_simulation()
 {
+<<<<<<< HEAD
     endSimulation();
     resetMartian();
 
@@ -138,6 +180,35 @@ void on_click_stop_simulation()
 
     endReport();
     launchReport();
+=======
+    enum sim_state state = getSimulationState();
+
+    if (state == SIM_RUNNING)
+    {
+        endSimulation();
+        gtk_button_set_label((GtkButton *)buttonComenzar, "Restart");
+        gtk_button_set_label((GtkButton *)buttonDetener, "Reset");
+        launchReport();
+    }
+
+    else if (state == SIM_ERROR || state == SIM_FINISHED)
+    {
+        resetMartian();
+        resetEnergyGrid();
+        resetEnergyGrid();
+        removeAllMartians();
+
+        gtk_button_set_label((GtkButton *)buttonComenzar, "Start");
+        gtk_button_set_label((GtkButton *)buttonDetener, "Stop");
+    }
+
+    // // resetMartian();
+    // // resetEnergyGrid();
+    // // resetEnergyGrid();
+    // // launchReport();
+
+    // gtk_button_set_label((GtkButton *)buttonComenzar, "Restart");
+>>>>>>> app-structure
 }
 
 void on_click_increase_speed()
@@ -197,7 +268,7 @@ void add_martian()
 
     //Agrega Display del Sprite del Marciano
     arrayMartianButton[numMartians - 1] = gtk_button_new();
-    arrayMartianImage[numMartians - 1] = gtk_image_new_from_file(arraySprites[numMartians - 1]);
+    arrayMartianImage[numMartians - 1] = gtk_image_new_from_pixbuf(sprite_images[numMartians - 1]);
     gtk_button_set_image((GtkButton *)arrayMartianButton[numMartians - 1], (GtkWidget *)arrayMartianImage[numMartians - 1]);
     gtk_grid_attach((GtkGrid *)energyGrid, arrayMartianButton[numMartians - 1], 0, numMartians, 1, 1);
 
@@ -207,9 +278,10 @@ void add_martian()
     gtk_button_set_label((GtkButton *)arrayNameButton[numMartians - 1], martianList[numMartians - 1].name);
 
     //Agrega Display del Valor de Energia del Marciano
-    arrayEnergyButton[numMartians - 1] = gtk_button_new();
-    gtk_grid_attach((GtkGrid *)energyGrid, arrayEnergyButton[numMartians - 1], 2, numMartians, 1, 1);
-    gtk_button_set_label((GtkButton *)arrayEnergyButton[numMartians - 1], valueEnergia);
+    arrayEnergyLabel[numMartians - 1] = gtk_label_new("");
+    gtk_grid_attach((GtkGrid *)energyGrid, arrayEnergyLabel[numMartians - 1], 2, numMartians, 1, 1);
+    gtk_label_set_text((GtkLabel *)arrayEnergyLabel[numMartians - 1], valueEnergia);
+    // gtk_button_set_label((GtkButton *)arrayEnergyLabel[numMartians - 1], valueEnergia);
 
     //Muestra los nuevos Display (botones)
     gtk_widget_show_all(mainWindow);
@@ -234,6 +306,7 @@ void drawMartian()
         return;
     }
 
+<<<<<<< HEAD
     // int remEnergy = m->remaining_energy;
     // char energyDisplay[4];
     // sprintf(energyDisplay, "%d", remEnergy);
@@ -242,10 +315,29 @@ void drawMartian()
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[m->id]);
 
     // gtk_button_set_label((GtkButton *)arrayEnergyButton[m->id], energyDisplay);
+=======
+    gtk_image_set_from_pixbuf((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], white_image);
+
+    if (m->state == MRTN_COMPLETED)
+    {
+        gtk_image_set_from_pixbuf((GtkImage *)arrayImagenes[m->position.y][m->position.x], white_image);
+        gtk_label_set_text((GtkLabel *)arrayEnergyLabel[m->id], "DONE");
+    }
+
+    else
+    {
+        gtk_image_set_from_pixbuf((GtkImage *)arrayImagenes[m->position.y][m->position.x], sprite_images[m->id]);
+
+        char rem_energy[4];
+        sprintf(rem_energy, "%d", m->remaining_energy);
+        gtk_label_set_text((GtkLabel *)arrayEnergyLabel[m->id], rem_energy);
+    }
+
+    // gtk_button_set_label((GtkButton *)arrayEnergyLabel[m->id], rem_energy);
+>>>>>>> app-structure
 
     gtk_widget_show_all(mainWindow);
 }
-
 void doneMartian()
 {
     martian_t *martianList = getMartianList();
@@ -255,8 +347,14 @@ void doneMartian()
     {
         if (martianList[i].state == MRTN_COMPLETED)
         {
+<<<<<<< HEAD
             gtk_image_set_from_file((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], "GUI/img/white.png");
             gtk_button_set_label((GtkButton *)arrayEnergyButton[i], "DONE");
+=======
+            gtk_image_set_from_pixbuf((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], white_image);
+            gtk_label_set_text((GtkLabel *)arrayEnergyLabel[martianList[i].id], "DONE");
+            // gtk_button_set_label((GtkButton *)arrayEnergyLabel[martianList[i].id], "DONE");
+>>>>>>> app-structure
         }
 
         printf("martian id i=%d: %d\n", i, martianList[i].id);
@@ -277,14 +375,15 @@ void resetMartian()
 
     for (int i = 0; i < numMartians; ++i)
     {
-        gtk_image_set_from_file((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], "GUI/img/white.png");
+        gtk_image_set_from_pixbuf((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], white_image);
     }
     return;
 }
 
 void resetEnergyGrid()
 {
-    for (int i = 1; i < MAX_MARTIANS; ++i)
+    int n = getNumMartians();
+    for (int i = 1; i <= n; ++i)
     {
         gtk_grid_remove_row((GtkGrid *)energyGrid, i);
     }
@@ -307,26 +406,39 @@ void setTimer()
 
     return;
 }
+void controlButtonsSimEnd()
+{
+    // gtk_button_set_label((GtkButton *)buttonComenzar, "Restart");
+    // gtk_button_set_label((GtkButton *)buttonDetener, "Reset");
+    // gtk_widget_show_all(mainWindow);
+}
 
 void *simulation_loop()
 {
-    enum sim_state state;
-    while (getSimulationState() == SIM_RUNNING)
+    enum sim_state state = getSimulationState();
+    while (state == SIM_RUNNING)
     {
         simulationStep();
         setTimer();
+<<<<<<< HEAD
         drawMartian();
         doneMartian();
+=======
+        // doneMartian();
+        drawMartian();
+        usleep(getTimeStep());
+>>>>>>> app-structure
 
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
         {
             endReport();
-            // resetSimulation();
+            controlButtonsSimEnd();
             break;
         }
-
-        usleep(getTimeStep());
     }
+    // gtk_button_set_label((GtkButton *)buttonComenzar, "Restart");
+    // gtk_button_set_label((GtkButton *)buttonDetener, "Reset");
+    // gtk_widget_show_all(mainWindow);
     return 0;
 }

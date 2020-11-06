@@ -313,11 +313,11 @@ int moveMartian(int martian_index, martian_t *martian_list, int labyrinth[LAB_HE
     ++right.x;
     --left.x;
 
-    printf("up x:%d, y:%d\n", up.x, up.y);
-    printf("left x:%d, y:%d   ", left.x, left.y);
-    printf(" -- x:%d, y:%d  --  ", martian->position.x, martian->position.y);
-    printf("   right x:%d, y:%d\n", right.x, right.y);
-    printf("down x:%d, y:%d\n", down.x, down.y);
+    // printf("up x:%d, y:%d\n", up.x, up.y);
+    // printf("left x:%d, y:%d   ", left.x, left.y);
+    // printf(" -- x:%d, y:%d  --  ", martian->position.x, martian->position.y);
+    // printf("   right x:%d, y:%d\n", right.x, right.y);
+    // printf("down x:%d, y:%d\n", down.x, down.y);
 
     // try moving right
     if (right.x >= 0 && right.x < LAB_WIDTH && labyrinth[right.y][right.x] == LAB_EMPTY && !(right.y == martian->previous_position.y && right.x == martian->previous_position.x))
@@ -405,7 +405,7 @@ void *simulationLoop()
         {
             moveMartian(selected_martian_id, _rm_martians, _rm_labyrinth);
             mrt = _rm_martians + selected_martian_id;
-            printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
+            // printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
             if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
             {
                 mrt->state = MRTN_COMPLETED;
@@ -424,10 +424,10 @@ void *simulationLoop()
         }
 
         usleep(_time_step);
-        printf("Simulation time is: %d \n", _sim_timer);
+        // printf("Simulation time is: %d \n", _sim_timer);
         _sim_timer++;
     } // end while
-    printf("Completed simulation time is: %d \n", _sim_timer);
+    // printf("Completed simulation time is: %d \n", _sim_timer);
 
     if (_rm_simulation_state == SIM_FINISHED || _rm_simulation_state == SIM_ERROR)
     {
@@ -459,13 +459,13 @@ void simulationStep()
 
             moveMartian(rm_martian_id, _rm_martians, _rm_labyrinth);
             mrt = _rm_martians + rm_martian_id;
-            printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
-            printf("It's previous position was x: %d, y: %d \n", mrt->previous_position.x, mrt->previous_position.y);
+            // printf("Moved martian %s to position x: %d, y: %d \n", mrt->name, mrt->position.x, mrt->position.y);
+            // printf("It's previous position was x: %d, y: %d \n", mrt->previous_position.x, mrt->previous_position.y);
             if (mrt->position.x == _end_position.x && mrt->position.y == _end_position.y)
             {
                 _rm_labyrinth[_end_position.y][_end_position.x] = 0;
                 mrt->state = MRTN_COMPLETED;
-                if (++_rm_completed_martians == _num_martians)
+                if ((++_rm_completed_martians) == _num_martians)
                 {
                     _rm_simulation_state = SIM_FINISHED;
                 }
@@ -494,9 +494,9 @@ void simulationStep()
             {
                 _edf_labyrinth[_end_position.y][_end_position.x] = 0;
                 mrt->state = MRTN_COMPLETED;
-                if (++_rm_completed_martians == _num_martians)
+                if ((++_edf_completed_martians) == _num_martians)
                 {
-                    _rm_simulation_state = SIM_FINISHED;
+                    _edf_simulation_state = SIM_FINISHED;
                 }
             }
         }
@@ -506,7 +506,7 @@ void simulationStep()
         }
     }
 
-    printf("Simulation time is: %d \n", _sim_timer);
+    // printf("Simulation time is: %d \n", _sim_timer);
     ++_sim_timer;
 }
 
