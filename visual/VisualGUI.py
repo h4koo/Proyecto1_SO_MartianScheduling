@@ -1,10 +1,12 @@
 from tkinter import Tk, Canvas
 
 class VisualGUI:
-    def __init__(self,master):
+    def __init__(self,master,windowTitle,path):
         self.master = master
-        master.title("Proyecto 1")
+        self.windowTitle = windowTitle
+        master.title(windowTitle)
         master.geometry("800x600")
+        self.path = path
 
         self.canvasWidth = 800
         self.canvasHeight = 600

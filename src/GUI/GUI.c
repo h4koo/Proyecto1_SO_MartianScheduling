@@ -131,8 +131,12 @@ void on_click_stop_simulation()
 {
     endSimulation();
     resetMartian();
+
+    //[BUG] Hay que darle dos veces para que funcione bien
     resetEnergyGrid();
     resetEnergyGrid();
+
+    endReport();
     launchReport();
 }
 
@@ -230,8 +234,15 @@ void drawMartian()
         return;
     }
 
+    // int remEnergy = m->remaining_energy;
+    // char energyDisplay[4];
+    // sprintf(energyDisplay, "%d", remEnergy);
+
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->previous_position.y][m->previous_position.x], "GUI/img/white.png");
     gtk_image_set_from_file((GtkImage *)arrayImagenes[m->position.y][m->position.x], arraySprites[m->id]);
+
+    // gtk_button_set_label((GtkButton *)arrayEnergyButton[m->id], energyDisplay);
+
     gtk_widget_show_all(mainWindow);
 }
 
@@ -245,8 +256,16 @@ void doneMartian()
         if (martianList[i].state == MRTN_COMPLETED)
         {
             gtk_image_set_from_file((GtkImage *)arrayImagenes[martianList[i].position.y][martianList[i].position.x], "GUI/img/white.png");
-            gtk_button_set_label((GtkButton *)arrayEnergyButton, "DONE");
+            gtk_button_set_label((GtkButton *)arrayEnergyButton[i], "DONE");
         }
+
+        printf("martian id i=%d: %d\n", i, martianList[i].id);
+
+        int remEnergy = martianList[i].remaining_energy;
+        char energyDisplay[4];
+        sprintf(energyDisplay, "%d", remEnergy);
+
+        gtk_button_set_label((GtkButton *)arrayEnergyButton[i], energyDisplay);
     }
     return;
 }
@@ -296,8 +315,8 @@ void *simulation_loop()
     {
         simulationStep();
         setTimer();
-        doneMartian();
         drawMartian();
+        doneMartian();
 
         state = getSimulationState();
         if (state == SIM_FINISHED || state == SIM_ERROR)
